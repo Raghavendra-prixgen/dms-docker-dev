@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="vahini_dashboard.PurchaseView">
+<div class="dvw-root" t-on-click="closeColMenu">
+
+    <!-- ── Fixed bar: sub-pills only ───────────────────────────────────── -->
+    <div class="dvw-fixed-bar">
+        <div class="dvw-sub-row">
+            <div class="dvw-sub-pills">
+                <button t-att-class="'dvw-sub-pill' + (isTabActive('purchase')        ? ' active' : '')"
+                        t-on-click="() => this.setTab('purchase')">Purchase</button>
+                <button t-att-class="'dvw-sub-pill' + (isTabActive('purchase_return') ? ' active' : '')"
+                        t-on-click="() => this.setTab('purchase_return')">Return</button>
+            </div>
+        </div>
+    </div><!-- /dvw-fixed-bar -->
+
+    <!-- ── Table ────────────────────────────────────────────────────────── -->
+    <div class="dvw-table-wrap">
+        <table class="dvw-table">
+            <thead>
+                <tr class="dvw-sum-row">
+                    <t t-if="isColVisible('bill_number')"><th class="dvw-th-left" t-on-click="() => this.sortBy('bill_number')"><span class="dvw-sum-label">Bill Number</span><span class="dvw-sum-badge"><t t-esc="state.summary.bill_count"/></span><span class="dvw-sum-arrows">⇅</span></th></t>
+                    <t t-if="isColVisible('bill_date')"><th t-on-click="() => this.sortBy('bill_date')"><span class="dvw-sum-label">Bill Date</span><span class="dvw-sum-arrows">⇅</span></th></t>
+                    <t t-if="isColVisible('accounting_date')"><th><span class="dvw-sum-label">Accounting Date</span></th></t>
+                    <t t-if="isColVisible('vendor_code')"><th><span class="dvw-sum-label">Vendor Code</span></th></t>
+                    <t t-if="isColVisible('vendor')"><th t-on-click="() => this.sortBy('vendor')"><span class="dvw-sum-label">Vendor</span><span class="dvw-sum-arrows">⇅</span></th></t>
+                    <t t-if="isColVisible('gst_no')"><th><span class="dvw-sum-label">GST No</span></th></t>
+                    <t t-if="isColVisible('vendor_ref')"><th><span class="dvw-sum-label">Vendor Ref</span></th></t>
+                    <t t-if="isColVisible('po_number')"><th><span class="dvw-sum-label">PO Number</span></th></t>
+                    <t t-if="isColVisible('company')"><th><span class="dvw-sum-label">Company</span></th></t>
+                    <t t-if="isColVisible('payment_state')"><th t-on-click="() => this.sortBy('payment_state')"><span class="dvw-sum-label">Payment State</span><span class="dvw-sum-arrows">⇅</span></th></t>
+                    <t t-if="isColVisible('product_code')"><th><span class="dvw-sum-label">Product Code</span></th></t>
+                    <t t-if="isColVisible('product')"><th t-on-click="() => this.sortBy('product')"><span class="dvw-sum-label">Product</span><span class="dvw-sum-arrows">⇅</span></th></t>
+                    <t t-if="isColVisible('label')"><th><span class="dvw-sum-label">Label</span></th></t>
+                    <t t-if="isColVisible('product_category')"><th><span class="dvw-sum-label">Category</span></th></t>
+                    <t t-if="isColVisible('product_type')"><th><span class="dvw-sum-label">Product Type</span></th></t>
+                    <t t-if="isColVisible('product_uom')"><th><span class="dvw-sum-label">UOM</span></th></t>
+                    <t t-if="isColVisible('account_name')"><th><span class="dvw-sum-label">Account</span></th></t>
+                    <t t-if="isColVisible('journal_name')"><th><span class="dvw-sum-label">Journal</span></th></t>
+                    <t t-if="isColVisible('currency')"><th><span class="dvw-sum-label">Currency</span></th></t>
+                    <t t-if="isColVisible('quantity')"><th class="dvw-th-num" t-on-click="() => this.sortBy('quantity')"><span class="dvw-sum-label">Quantity</span><span class="dvw-sum-val"><t t-esc="fmtNum(state.summary.total_qty)"/></span><span class="dvw-sum-arrows">⇅</span></th></t>
+                    <t t-if="isColVisible('price')"><th class="dvw-th-num" t-on-click="() => this.sortBy('price')"><span class="dvw-sum-label">Price</span><span class="dvw-sum-arrows">⇅</span></th></t>
+                    <t t-if="isColVisible('discount')"><th class="dvw-th-num"><span class="dvw-sum-label">Discount %</span></th></t>
+                    <t t-if="isColVisible('amount_excl_tax')"><th class="dvw-th-num" t-on-click="() => this.sortBy('amount_excl_tax')"><span class="dvw-sum-label">Amt Excl Tax</span><span class="dvw-sum-val"><t t-esc="fmtNum(state.summary.tax_less)"/></span><span class="dvw-sum-arrows">⇅</span></th></t>
+                    <t t-if="isColVisible('cgst_rate')"><th class="dvw-th-num"><span class="dvw-sum-label">CGST %</span></th></t>
+                    <t t-if="isColVisible('cgst_amount')"><th class="dvw-th-num"><span class="dvw-sum-label">CGST Amt</span></th></t>
+                    <t t-if="isColVisible('sgst_rate')"><th class="dvw-th-num"><span class="dvw-sum-label">SGST %</span></th></t>
+                    <t t-if="isColVisible('sgst_amount')"><th class="dvw-th-num"><span class="dvw-sum-label">SGST Amt</span></th></t>
+                    <t t-if="isColVisible('igst_rate')"><th class="dvw-th-num"><span class="dvw-sum-label">IGST %</span></th></t>
+                    <t t-if="isColVisible('igst_amount')"><th class="dvw-th-num"><span class="dvw-sum-label">IGST Amt</span></th></t>
+                    <t t-if="isColVisible('tds_rate')"><th class="dvw-th-num"><span class="dvw-sum-label">TDS %</span></th></t>
+                    <t t-if="isColVisible('tds_amount')"><th class="dvw-th-num"><span class="dvw-sum-label">TDS Amt</span></th></t>
+                    <t t-if="isColVisible('rcm_amount')"><th class="dvw-th-num"><span class="dvw-sum-label">RCM Amt</span></th></t>
+                    <t t-if="isColVisible('tax_amount')"><th class="dvw-th-num"><span class="dvw-sum-label">Total Tax</span></th></t>
+                    <t t-if="isColVisible('amount_incl_tax')"><th class="dvw-th-num" t-on-click="() => this.sortBy('amount_incl_tax')"><span class="dvw-sum-label">Amt Incl Tax</span><span class="dvw-sum-val"><t t-esc="fmtNum(state.summary.tax_paid)"/></span><span class="dvw-sum-arrows">⇅</span></th></t>
+                    <t t-if="isColVisible('analytic_account')"><th><span class="dvw-sum-label">Analytic Account</span></th></t>
+                    <t t-if="isColVisible('vendor_city')"><th><span class="dvw-sum-label">City</span></th></t>
+                    <t t-if="isColVisible('vendor_state')"><th><span class="dvw-sum-label">State</span></th></t>
+                    <t t-if="isColVisible('vendor_country')"><th><span class="dvw-sum-label">Country</span></th></t>
+                    <t t-if="isColVisible('invoice_type')"><th><span class="dvw-sum-label">Type</span></th></t>
+                    <t t-if="isColVisible('bill_aging')"><th t-on-click="() => this.sortBy('bill_aging')"><span class="dvw-sum-label">Bill Aging</span><span class="dvw-sum-arrows">⇅</span></th></t>
+                    <t t-if="isColVisible('payment_terms')"><th><span class="dvw-sum-label">Payment Terms</span></th></t>
+                    <t t-if="isColVisible('boe_rate')"><th class="dvw-th-num"><span class="dvw-sum-label">BOE Rate</span></th></t>
+                    <t t-if="isColVisible('grn_ref')"><th><span class="dvw-sum-label">GRN Ref</span></th></t>
+                </tr>
+            </thead>
+            <tbody>
+                <t t-if="state.loading">
+                    <tr><td colspan="44" class="dvw-loading-cell">Loading…</td></tr>
+                </t>
+                <t t-elif="state.rows.length === 0">
+                    <tr><td colspan="44" class="dvw-empty-cell">No records found</td></tr>
+                </t>
+                <t t-else="">
+                    <tr t-foreach="state.rows" t-as="row" t-key="row_index" class="dvw-row">
+                        <t t-if="isColVisible('bill_number')"><td class="dvw-td-left"><t t-esc="row.bill_number"/></td></t>
+                        <t t-if="isColVisible('bill_date')"><td><t t-esc="row.bill_date"/></td></t>
+                        <t t-if="isColVisible('accounting_date')"><td><t t-esc="row.accounting_date"/></td></t>
+                        <t t-if="isColVisible('vendor_code')"><td><t t-esc="row.vendor_code"/></td></t>
+                        <t t-if="isColVisible('vendor')"><td><t t-esc="row.vendor"/></td></t>
+                        <t t-if="isColVisible('gst_no')"><td><t t-esc="row.gst_no"/></td></t>
+                        <t t-if="isColVisible('vendor_ref')"><td><t t-esc="row.vendor_ref"/></td></t>
+                        <t t-if="isColVisible('po_number')"><td><t t-esc="row.po_number"/></td></t>
+                        <t t-if="isColVisible('company')"><td><t t-esc="row.company"/></td></t>
+                        <t t-if="isColVisible('payment_state')"><td><t t-esc="row.payment_state"/></td></t>
+                        <t t-if="isColVisible('product_code')"><td><t t-esc="row.product_code"/></td></t>
+                        <t t-if="isColVisible('product')"><td><t t-esc="row.product"/></td></t>
+                        <t t-if="isColVisible('label')"><td><t t-esc="row.label"/></td></t>
+                        <t t-if="isColVisible('product_category')"><td><t t-esc="row.product_category"/></td></t>
+                        <t t-if="isColVisible('product_type')"><td><t t-esc="row.product_type"/></td></t>
+                        <t t-if="isColVisible('product_uom')"><td><t t-esc="row.product_uom"/></td></t>
+                        <t t-if="isColVisible('account_name')"><td><t t-esc="row.account_name"/></td></t>
+                        <t t-if="isColVisible('journal_name')"><td><t t-esc="row.journal_name"/></td></t>
+                        <t t-if="isColVisible('currency')"><td><t t-esc="row.currency"/></td></t>
+                        <t t-if="isColVisible('quantity')"><td class="dvw-td-num"><t t-esc="fmtNum(row.quantity)"/></td></t>
+                        <t t-if="isColVisible('price')"><td class="dvw-td-num"><t t-esc="fmtNum(row.price)"/></td></t>
+                        <t t-if="isColVisible('discount')"><td class="dvw-td-num"><t t-esc="fmtNum(row.discount)"/></td></t>
+                        <t t-if="isColVisible('amount_excl_tax')"><td class="dvw-td-num"><t t-esc="fmtNum(row.amount_excl_tax)"/></td></t>
+                        <t t-if="isColVisible('cgst_rate')"><td class="dvw-td-num"><t t-esc="row.cgst_rate"/></td></t>
+                        <t t-if="isColVisible('cgst_amount')"><td class="dvw-td-num"><t t-esc="fmtNum(row.cgst_amount)"/></td></t>
+                        <t t-if="isColVisible('sgst_rate')"><td class="dvw-td-num"><t t-esc="row.sgst_rate"/></td></t>
+                        <t t-if="isColVisible('sgst_amount')"><td class="dvw-td-num"><t t-esc="fmtNum(row.sgst_amount)"/></td></t>
+                        <t t-if="isColVisible('igst_rate')"><td class="dvw-td-num"><t t-esc="row.igst_rate"/></td></t>
+                        <t t-if="isColVisible('igst_amount')"><td class="dvw-td-num"><t t-esc="fmtNum(row.igst_amount)"/></td></t>
+                        <t t-if="isColVisible('tds_rate')"><td class="dvw-td-num"><t t-esc="row.tds_rate"/></td></t>
+                        <t t-if="isColVisible('tds_amount')"><td class="dvw-td-num"><t t-esc="fmtNum(row.tds_amount)"/></td></t>
+                        <t t-if="isColVisible('rcm_amount')"><td class="dvw-td-num"><t t-esc="fmtNum(row.rcm_amount)"/></td></t>
+                        <t t-if="isColVisible('tax_amount')"><td class="dvw-td-num"><t t-esc="fmtNum(row.tax_amount)"/></td></t>
+                        <t t-if="isColVisible('amount_incl_tax')"><td class="dvw-td-num"><t t-esc="fmtNum(row.amount_incl_tax)"/></td></t>
+                        <t t-if="isColVisible('analytic_account')"><td><t t-esc="row.analytic_account"/></td></t>
+                        <t t-if="isColVisible('vendor_city')"><td><t t-esc="row.vendor_city"/></td></t>
+                        <t t-if="isColVisible('vendor_state')"><td><t t-esc="row.vendor_state"/></td></t>
+                        <t t-if="isColVisible('vendor_country')"><td><t t-esc="row.vendor_country"/></td></t>
+                        <t t-if="isColVisible('invoice_type')"><td><t t-esc="row.invoice_type"/></td></t>
+                        <t t-if="isColVisible('bill_aging')"><td><t t-esc="row.bill_aging"/></td></t>
+                        <t t-if="isColVisible('payment_terms')"><td><t t-esc="row.payment_terms"/></td></t>
+                        <t t-if="isColVisible('boe_rate')"><td class="dvw-td-num"><t t-esc="fmtNum(row.boe_rate)"/></td></t>
+                        <t t-if="isColVisible('grn_ref')"><td><t t-esc="row.grn_ref"/></td></t>
+                    </tr>
+                </t>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ── Pagination ────────────────────────────────────────────────────── -->
+    <div class="dvw-pagination">
+        <button class="dvw-page-btn" t-att-disabled="isPrevDisabled()" t-on-click="prevPage">&#8249;</button>
+        <t t-foreach="pageNums" t-as="p" t-key="p_index">
+            <t t-if="p === '...'">
+                <span class="dvw-page-ellipsis">…</span>
+            </t>
+            <t t-else="">
+                <button t-att-class="'dvw-page-btn' + (isCurrentPage(p) ? ' active' : '')"
+                        t-on-click="() => this.goToPage(p)">
+                    <t t-esc="p"/>
+                </button>
+            </t>
+        </t>
+        <button class="dvw-page-btn" t-att-disabled="isNextDisabled()" t-on-click="nextPage">&#8250;</button>
+    </div>
+
+</div>
+</t>
+</templates>

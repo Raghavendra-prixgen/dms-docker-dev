@@ -1,0 +1,67 @@
+
+.vd-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 7px;
+    padding: 5px 14px;
+//     background: var(--card);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+
+    [data-theme="dark"] & {
+        background: #1a2234;
+        border-color: #2d3748;
+    }
+}
+
+.vd-tb-act {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vd-tb-date {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    border-radius: 7px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text1);
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.vd-tb-round {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vd-tb-refresh {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text1);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

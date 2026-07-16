@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="vahini_dashboard.GpView">
+<div class="gpv-root">
+
+    <!-- Left panel: pie chart -->
+    <div class="gpv-left">
+
+        <!-- Left toolbar -->
+        <div class="gpv-left-toolbar">
+            <!-- Group By dropdown -->
+            <div class="gpv-dd-wrap">
+                <div class="gpv-dd-btn" t-on-click="toggleGroupDD">
+                    <span><t t-esc="groupLabel"/></span>
+                    <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+                <t t-if="state.groupOpen">
+                    <div class="gpv-dd-list">
+                        <t t-foreach="groupOptions" t-as="opt" t-key="opt.value">
+                            <div t-att-class="'gpv-dd-item'+(state.groupBy===opt.value?' selected':'')"
+                                 t-on-click="() => this.setGroupBy(opt.value)">
+                                <t t-esc="opt.label"/>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+            </div>
+            <!-- Save icon -->
+            <button class="gpv-tool-btn" title="Save View">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            </button>
+            <!-- Color / Reset buttons -->
+            <button class="gpv-color-btn" title="Color View">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><circle cx="12" cy="12" r="10" fill="#4f6df5"/><circle cx="12" cy="12" r="6" fill="#fff"/><circle cx="12" cy="12" r="3" fill="#4f6df5"/></svg>
+            </button>
+            <button class="gpv-reset-btn" title="Reset">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.64"/></svg>
+            </button>
+        </div>
+
+        <!-- Pie chart -->
+        <div class="gpv-pie-wrap">
+            <t t-if="state.loading">
+                <div class="gpv-loading"><div class="vd-spinner"/></div>
+            </t>
+            <t t-if="!state.loading and pieSlices.length">
+                <!-- Tooltip -->
+                <t t-if="state.hoveredPie">
+                    <div class="gpv-pie-tooltip">
+                        <div class="gpv-tt-label"><t t-esc="state.hoveredPie.label"/></div>
+                        <div class="gpv-tt-val">₹ <t t-esc="fmt(state.hoveredPie.value)"/></div>
+                        <div class="gpv-tt-pct"><t t-esc="state.hoveredPie.pct"/>%</div>
+                    </div>
+                </t>
+                <svg class="gpv-pie-svg" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
+                    <t t-foreach="pieSlices" t-as="sl" t-key="sl_index">
+                        <path t-att-d="sl.path"
+                              t-att-fill="sl.color"
+                              class="gpv-pie-slice"
+                              t-on-mouseover="() => this.onPieHover(sl)"
+                              t-on-mouseleave="() => this.onPieLeave()"/>
+                    </t>
+                </svg>
+            </t>
+            <t t-if="!state.loading and !pieSlices.length">
+                <div class="gpv-loading">No data for this period</div>
+            </t>
+        </div>
+
+        <!-- Legend -->
+        <div class="gpv-legend">
+            <t t-foreach="state.pieData.slice(0,15)" t-as="d" t-key="d_index">
+                <div class="gpv-legend-row">
+                    <span class="gpv-legend-dot" t-att-style="'background:'+pieColors[d_index % pieColors.length]"/>
+                    <span class="gpv-legend-label"><t t-esc="d.label"/></span>
+                    <span class="gpv-legend-val"><t t-esc="fmt(d.value)"/></span>
+                </div>
+            </t>
+        </div>
+    </div>
+
+    <!-- Right panel: table -->
+    <div class="gpv-right">
+
+        <!-- Table toolbar -->
+        <div class="gpv-right-toolbar">
+            <button class="gpv-tbl-icon-btn" title="Grid View">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            </button>
+            <div class="gpv-right-spacer"/>
+            <div class="gpv-search-wrap">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input class="gpv-search" placeholder="Search" t-on-input="onSearch"/>
+            </div>
+            <button class="gpv-tbl-icon-btn" title="Table View">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+            </button>
+            <button class="gpv-tbl-icon-btn" title="Download" t-on-click="downloadPDF">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </button>
+        </div>
+
+        <!-- Table -->
+        <div class="gpv-table-wrap">
+            <t t-if="state.loading">
+                <div class="gpv-loading"><div class="vd-spinner"/><span>Loading&#8230;</span></div>
+            </t>
+            <t t-if="!state.loading">
+                <table class="gpv-table">
+                    <thead>
+                        <tr>
+                            <th class="gpv-th-bill" t-on-click="() => this.sortBy('bill_no')">
+                                Billno <span class="gpv-sort"><t t-esc="sortIcon('bill_no')"/></span>
+                            </th>
+                            <th class="gpv-th-num" t-on-click="() => this.sortBy('value')">
+                                Value
+                                <div class="gpv-th-sub gpv-blue"><t t-esc="fmtKpi(state.kpis.total_value)"/>
+                                    <span class="gpv-sort"><t t-esc="sortIcon('value')"/></span>
+                                </div>
+                            </th>
+                            <th class="gpv-th-num" t-on-click="() => this.sortBy('gross_profit')">
+                                Gross Profit
+                                <div class="gpv-th-sub gpv-blue"><t t-esc="fmtKpi(state.kpis.total_gp)"/>
+                                    <span class="gpv-sort"><t t-esc="sortIcon('gross_profit')"/></span>
+                                </div>
+                            </th>
+                            <th class="gpv-th-num" t-on-click="() => this.sortBy('gp_pct')">
+                                Gp %
+                                <div class="gpv-th-sub gpv-blue"><t t-esc="state.kpis.avg_gp_pct || 0"/>
+                                    <span class="gpv-sort"><t t-esc="sortIcon('gp_pct')"/></span>
+                                </div>
+                            </th>
+                            <th class="gpv-th-num" t-on-click="() => this.sortBy('contr_pct')">
+                                Contr %
+                                <span class="gpv-sort"><t t-esc="sortIcon('contr_pct')"/></span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="state.rows" t-as="row" t-key="row.bill_id">
+                            <tr class="gpv-tr">
+                                <td class="gpv-td-bill"><t t-esc="row.bill_no"/></td>
+                                <td class="gpv-td-num"><t t-esc="fmt(row.value)"/></td>
+                                <td class="gpv-td-num"><t t-esc="fmt(row.gross_profit)"/></td>
+                                <td class="gpv-td-num"><t t-esc="row.gp_pct"/></td>
+                                <td class="gpv-td-num"><t t-esc="row.contr_pct"/></td>
+                            </tr>
+                        </t>
+                        <t t-if="!state.rows.length">
+                            <tr><td colspan="5" class="gpv-empty">No bills found for this period</td></tr>
+                        </t>
+                    </tbody>
+                </table>
+            </t>
+        </div>
+
+        <!-- Pagination -->
+        <div class="gpv-pager" t-if="state.totalPages > 1">
+            <button class="gpv-pg-btn" t-att-disabled="state.page===1?'':undefined" t-on-click="prevPage">&#8249;</button>
+            <t t-foreach="pageNums" t-as="p" t-key="p_index">
+                <t t-if="p==='...'"><span class="gpv-pg-dot">&#8230;</span></t>
+                <t t-else=""><button t-att-class="'gpv-pg-btn'+(state.page===p?' on':'')" t-on-click="() => this.goPage(p)"><t t-esc="p"/></button></t>
+            </t>
+            <button class="gpv-pg-btn" t-att-disabled="state.page===state.totalPages?'':undefined" t-on-click="nextPage">&#8250;</button>
+        </div>
+    </div>
+
+</div>
+</t>
+
+</templates>

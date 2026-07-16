@@ -1,0 +1,421 @@
+<!-- <odoo>
+    <data>
+        <record id="res_config_settings_view_form_access_token_dms" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.access.token</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//widget[@name='res_config_dev_tool']" position="before">
+                    
+                    <div id="access_token_api_settings">
+                    <h2>OTP GENERATE CONFIG FOR MOBILE</h2>
+                   
+                        <div class="row mt16 o_settings_container" name="access_token_container">
+                            <div class="col-12 col-lg-6 o_setting_box" id="eruvaka_access_token" title="Ravago Access token">
+                            <div class="o_setting_right_pane" id="access_token_api_settings">
+                               
+    
+                                <div>
+                                    <label for="sid"/>
+                                </div>
+                                <div>
+                                    <field name="sid"/>
+                                </div>
+                                <div>
+                                    <label for="key_id"/>
+                                </div>
+                                <div>                               
+                                    <field name = "key_id"/>
+                                </div>
+                                <div>
+                                    <label for="token"/>
+                                </div>
+                                <div>                               
+                                    <field name = "token"/>
+                                </div>
+                                <!-- <div>
+                                    <label for="generate_token"/>
+                                </div> -->
+                                <!-- <div>
+                                    <button class="oe_stat_button" string="Connect" type="object" name="generate_token" />
+                                </div> -->
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="redeem_type_code_api_settings">
+                    <h2>Redeem Type Code</h2>
+                   
+                        <div class="row mt16 o_settings_container" name="access_token_container">
+                            <div class="col-12 col-lg-6 o_setting_box" id="eruvaka_access_token" title="Ravago Access token">
+                            <div class="o_setting_right_pane" id="redeem_type_code_api_settings">
+                               
+                                <div>
+                                    <label for="by_product"/>
+                                </div>
+                                <div>
+                                    <field name="by_product"/>
+                                </div>
+                                <div>
+                                    <label for="by_cash"/>
+                                </div>
+                                <div>                               
+                                    <field name = "by_cash"/>
+                                </div>
+                                
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="background_image_dms_list" model="ir.ui.view">
+            <field name="name">BackGround Image</field>
+            <field name="model">background.image</field>
+            <field name="arch" type="xml">
+               <list>
+                    <field name="image_attachment" filename="fname" widget="attachment" string="Attachment"/>
+
+               </list>
+            </field>
+        </record>
+        <record id="background_image_dms_form" model="ir.ui.view">
+            <field name="name">BackGround Image</field>
+            <field name="model">background.image</field>
+            <field name="arch" type="xml">
+                <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="y_sequence" readonly="1"/>
+                            <field name="image_attachment" filename="fname" widget="attachment" string="Image Attachment" required="1"/>
+                        </group>
+                        <group>
+                            <field name="image_url" widget="url" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_background_imageeee" model="ir.actions.act_window">
+            <field name="name">Background Image</field>
+            <field name="res_model">background.image</field>
+            <field name="view_mode">list,form</field>
+            <field name="target">current</field>
+        </record>
+       
+        
+
+        <record id="view_inherit_ir_attachments" model="ir.ui.view">
+            <field name="name">ir.attachments.inherit</field>
+            <field name="model">ir.attachment</field>
+            <field name="inherit_id" ref="base.view_attachment_form"/>
+            <field name="arch" type="xml">
+                <field name="res_field" position="after">
+                    <field name="y_attach_urls" widget="url"/>
+                </field>
+
+            </field>
+        </record>
+
+
+
+
+        <record id="reward_points_list_view" model="ir.ui.view">
+            <field name="name">Reward Points list</field>
+            <field name="model">reward.points</field>
+            <field name="arch" type="xml">
+              <!-- <list editable="bottom"> -->
+               <list>
+                <field name="name" column_invisible="1"/>
+                <field name="plumber_id" width="10"/>
+                <field name="plumber" width="10"/>
+                <field name="plumber_mobile" width="10" />
+
+                <field name="total_reward" width="20"/>
+                <field name="balance_reward" width="20"/>
+                <field name="redeem_total" width="20"/>
+               
+                <!-- <field name="name" column_invisible="1"/>
+                <field name="claim_id" width="5" column_invisible="1"/>
+                <field name="plumber_id" width="10"/>
+                <field name="plumber" width="10"/>
+                <field name="total_reward" width="10"/>
+                <field name="balance_reward" width="10"/>
+                <field name="redeem_total" width="10"/>
+                <field name="redeem_claim_by_cash" width="15"/>
+                <field name="redeem_claim_as_product" width="15"/>
+                <field name="redeem_claim_by_e_comm" width="15"/> -->
+
+              </list>
+            </field>
+        </record>
+        <record id="reward_points_form_view" model="ir.ui.view">
+            <field name="name">Reward Points</field>
+            <field name="model">reward.points</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div name="button_box" position="inside">
+                            <button class="oe_stat_button" 
+                                     type="object" 
+                                     icon="fa-tags"     
+                                     string="ByProduct Redeem"                    
+                                     name="action_by_product_redeem">
+                            </button>
+
+                            <button class="oe_stat_button" 
+                                     type="object" 
+                                     icon="fa-money"     
+                                     string="ByCash Redeem"                    
+                                     name="action_by_cash_redeem">
+                            </button>
+                           
+                        </div>
+                        <group>
+                            <group>
+                                <field name="plumber_id" readonly="1"/>
+                                <field name="plumber" readonly="1"/>
+                                <field name="plumber_mobile" readonly="1"/>
+                               
+                            </group>
+                            <group>
+                                <field name="total_reward" readonly="1"/>
+                                <field name="balance_reward" readonly="1"/>
+                                <field name="claimed_reward" readonly="1"/>
+                                <field name="total_claimed_by_cash_and_products" invisible="0"/>
+                            </group>
+                        </group>
+                        <!-- <notebook>
+                            <page id="claim_data" name="claim_tab" string="Claim">
+                                <field name="claim_redeem_type" widget="section_and_note_one2many" >
+                                    <list editable="bottom" string="Claim">
+                                        <field name="product_id"/>
+                                        <field name="redeem_type"/>
+                                        <field name="claim_reward" sum="total"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook> -->
+
+                    </sheet>
+                    
+                </form>
+            </field>
+        </record>
+      
+        
+        <record id="action_reward_points" model="ir.actions.act_window">
+            <field name="name">Reward Points</field>
+            <field name="res_model">reward.points</field>
+            <field name="view_mode">list,form</field>
+            <field name="target">current</field>
+        </record>
+
+        <record id="redeem_type_list_view" model="ir.ui.view">
+            <field name="name">redeem_type_list_view</field>
+            <field name="model">redeem.type</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name" readonly="0"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="redeem_type_dms_form" model="ir.ui.view">
+            <field name="name">Redeem Type</field>
+            <field name="model">redeem.type</field>
+            <field name="arch" type="xml">
+                <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" readonly="0"/>
+                        </group>
+                        <group>
+                            <field name="code" readonly="1" invisible="0"/>
+                        </group>
+                    </group>
+                </sheet>
+                </form>
+            </field>
+        </record>
+       
+
+        <record id="action_redeem_type__1" model="ir.actions.act_window">
+            <field name="name">Redeem Type</field>
+            <field name="res_model">redeem.type</field>
+            <field name="view_mode">list,form</field>
+            <field name="target">current</field>
+        </record>
+
+
+
+        <record id="claim_redeem_points_dms_list" model="ir.ui.view">
+            <field name="name">Claim Redeem Points list</field>
+            <field name="model">reward.points.claim</field>
+            <field name="arch" type="xml">
+              <list>
+                    
+                    <field name="plumber_id" readonly="0" column_invisible="1"/>
+                    <field name="plumber_name" readonly="0"/>
+                    <field name="retailer_name" readonly="0"/>
+                
+                    <field name="redeem_type" readonly="0"/>
+                    <field name="total_reward" readonly="0"/>
+                    <field name="balance_reward" readonly="0"/>
+                    <field name="claim_reward"/>
+                      
+                </list>
+            </field>
+        </record>
+        
+       
+        <record id="claim_redeem_points_dms_form" model="ir.ui.view">
+            <field name="name">Claim Redeem Points</field>
+            <field name="model">reward.points.claim</field>
+            <field name="arch" type="xml">
+                <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="plumber_name" readonly="0"/>
+                            <field name="retailer_name" readonly="0"/>
+                            <field name="redeem_type" readonly="0"/>
+
+                        </group>
+                        <group>
+                            <field name="total_reward" readonly="0"/>
+                            <field name="balance_reward" readonly="0"/>
+                            <field name="claim_reward"/>
+                        </group>
+                    </group>
+                </sheet>
+                </form>
+            </field>
+        </record>
+        
+        
+        <record id="action_claim_redeem" model="ir.actions.act_window">
+            <field name="name">Claim Redeem</field>
+            <field name="res_model">reward.points.claim</field>
+            <field name="view_mode">list,form</field>
+            <field name="target">current</field>
+        </record>
+
+
+        
+
+
+        <record id="product_redeem_list" model="ir.ui.view">
+            <field name="name">product redeem list</field>
+            <field name="model">by_product.redeem</field>
+            <field name="arch" type="xml">
+                <list editable="bottom">
+                    <field name="plumber_name" readonly="0" width="10"/>
+                    <field name="date" width="10"/>
+                    <field name="mobile" readonly="0" column_invisible="1"/>
+                    <field name="redeem_id" width="10"/>
+                    <field name="product_id" readonly="0" width="20" />
+                    <field name="total_redeem" readonly="0" width="10"/>
+                    <field name="balance_redeem" readonly="0" width="15"/>
+                    <field name="consumed_redeem" readonly="0" width="15"/>  
+                    <!-- <label for="action_approve" string="Action"/> -->
+                    <button name="action_approve" 
+                        string="Approve" 
+                        type="object" 
+                        class="btn-primary"/> 
+                    <!-- <button name="action_approve" type="object" string="Approve" width="10"/> -->
+                </list>
+            </field>
+        </record>
+        
+        <record id="action_product_redeem" model="ir.actions.act_window">
+            <field name="name">Product Redeem List</field>
+            <field name="res_model">by_product.redeem</field>
+            <field name="view_mode">list</field>
+            <field name="target">current</field>
+        </record>
+        
+
+
+        <record id="cash_redeem_list" model="ir.ui.view">
+            <field name="name">Cash redeem list</field>
+            <field name="model">by_cash.redeem</field>
+            <field name="arch" type="xml">
+                <list editable="bottom">
+                    <field name="plumber_name" readonly="0" width="20"/>
+                    <field name="date" width="10"/>
+                    <field name="mobile" readonly="0" column_invisible="1"/>
+                    <field name="redeem_id" width="10"/>
+                    <field name="total_redeem" readonly="0" width="20"/>
+                    <field name="balance_redeem" readonly="0" width="15"/>
+                    <field name="consumed_redeem" readonly="0" width="15"/>  
+                    <!-- <label for="action_approve" string="Action"/> -->
+                    <button name="action_approve_cash" 
+                        string="Approve" 
+                        type="object" 
+                        class="btn-primary"/> 
+                    <!-- <button name="action_approve" type="object" string="Approve" width="10"/> -->
+                </list>
+            </field>
+        </record>
+
+      
+        
+        <record id="action_cash_redeem" model="ir.actions.act_window">
+            <field name="name">Cash Redeem List</field>
+            <field name="res_model">by_cash.redeem</field>
+            <field name="view_mode">list</field>
+            <field name="target">current</field>
+        </record>
+        
+
+        <record id="customer_feedback_list" model="ir.ui.view">
+            <field name="name">Customer Feedback list</field>
+            <field name="model">customer.feedback</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="customer_id" readonly="0" />
+                    <field name="mobile"/>
+                    <field name="feedback"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="customer_feedback_form" model="ir.ui.view">
+            <field name="name">Customer Feedback Form</field>
+            <field name="model">customer.feedback</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="customer_id" readonly="0" />
+                                <field name="mobile"/>
+                            </group>
+                            <group>
+                                <field name="feedback"/>               
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_customer_feedback" model="ir.actions.act_window">
+            <field name="name">Customer Feedback List</field>
+            <field name="res_model">customer.feedback</field>
+            <field name="view_mode">list,form</field>
+            <field name="target">current</field>
+        </record>
+        
+        
+        
+        
+        
+    </data>
+</odoo> -->

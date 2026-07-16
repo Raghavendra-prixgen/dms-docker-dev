@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="vahini_dashboard.SnapHeader">
+
+    <header class="vd-header m-3 rounded-4" t-on-click="closeCompanyMenu">
+        <div class="vd-hdr-left">
+            <span class="vd-hdr-title"><t t-esc="props.title || 'Snap View'"/></span>
+            <button class="vd-settings-btn">&#9881;</button>
+        </div>
+
+        <div class="vd-hdr-search">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2"
+                 style="flex-shrink:0;color:var(--text2)">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input class="vd-search-input" placeholder="Press space for search" readonly="readonly"/>
+            <button class="vd-search-plus">+</button>
+        </div>
+
+        <div class="vd-hdr-right">
+            <div class="vd-divider"/>
+
+            <!-- ── Company Selector ─────────────────────────────────────── -->
+            <div class="vd-company-wrap" t-on-click.stop="toggleCompanyMenu">
+                <div class="vd-avatar" style="background:#6366f1">
+                    <t t-esc="state.currentCompany.name ? state.currentCompany.name[0].toUpperCase() : 'C'"/>
+                </div>
+                <div>
+                    <div class="vd-user-name"><t t-esc="state.currentCompany.name || 'Select Company'"/></div>
+                    <div class="vd-user-sub">▾ Switch</div>
+                </div>
+
+                <!-- ── Grouped Dropdown ──────────────────────────────────── -->
+                <t t-if="state.companyOpen">
+                    <div class="vd-company-dropdown" t-on-click.stop="">
+                        <div class="vd-company-header">Select Company</div>
+
+                        <t t-foreach="state.groups" t-as="grp" t-key="grp.id">
+
+                            <!-- Parent company row -->
+                            <div t-att-class="'vd-company-item vd-co-parent' +
+                                              (grp.id === state.currentCompany.id ? ' active' : '')"
+                                 t-on-click="() => this.switchCompany(grp)">
+                                <span class="vd-co-dot" t-att-style="'background:' + (grp.color || '#6366f1')">
+                                    <t t-esc="grp.name[0].toUpperCase()"/>
+                                </span>
+                                <span class="vd-co-name"><t t-esc="grp.name"/></span>
+                                <t t-if="grp.id === state.currentCompany.id">
+                                    <span class="vd-co-check">✓</span>
+                                </t>
+                            </div>
+
+                            <!-- Branch rows — indented under parent -->
+                            <t t-foreach="grp.branches" t-as="branch" t-key="branch.id">
+                                <div t-att-class="'vd-company-item vd-co-branch' +
+                                                  (branch.id === state.currentCompany.id ? ' active' : '')"
+                                     t-on-click="() => this.switchCompany(branch)">
+                                    <!-- indent line -->
+                                    <span class="vd-co-indent">
+                                        <span class="vd-co-indent-line"/>
+                                    </span>
+                                    <span class="vd-co-dot vd-co-dot-sm"
+                                          t-att-style="'background:' + (branch.color || '#818cf8')">
+                                        <t t-esc="branch.name[0].toUpperCase()"/>
+                                    </span>
+                                    <div class="vd-co-branch-info">
+                                        <span class="vd-co-name"><t t-esc="branch.name"/></span>
+                                        <span class="vd-co-parent-label">
+                                            <t t-esc="branch.parent_name"/>
+                                        </span>
+                                    </div>
+                                    <t t-if="branch.id === state.currentCompany.id">
+                                        <span class="vd-co-check">✓</span>
+                                    </t>
+                                </div>
+                            </t>
+
+                        </t>
+                    </div>
+                </t>
+            </div>
+
+            <button class="vd-theme-btn text-white rounded-4 border-5" t-on-click="onToggle">
+                <t t-esc="themeIcon"/>
+            </button>
+        </div>
+    </header>
+
+    <div class="vd-toolbar mx-3 rounded-4">
+        <button class="vd-tb-act rounded-2 bg-white" title="Download">
+            <t t-call="vahini_dashboard.Icon">
+                <t t-set="icon" t-value="'download'"/>
+                <t t-set="size" t-value="13"/>
+            </t>
+        </button>
+
+        <div style="position:relative">
+            <button class="vd-tb-date" t-on-click="openPicker">
+                <t t-call="vahini_dashboard.Icon">
+                    <t t-set="icon" t-value="'calendar'"/>
+                    <t t-set="size" t-value="11"/>
+                </t>
+                <t t-esc="props.dateDisplay"/>
+            </button>
+            <t t-if="state.pickerOpen">
+                <div class="vd-date-picker" t-on-click.stop="">
+                    <div class="vd-dp-row">
+                        <label>From</label>
+                        <input type="date" t-att-value="state.draftFrom"
+                               t-on-change="onFromChange"/>
+                    </div>
+                    <div class="vd-dp-row">
+                        <label>To</label>
+                        <input type="date" t-att-value="state.draftTo"
+                               t-on-change="onToChange"/>
+                    </div>
+                    <div class="vd-dp-actions">
+                        <button class="vd-dp-cancel" t-on-click="closePicker">Cancel</button>
+                        <button class="vd-dp-apply"  t-on-click="applyDates">Apply</button>
+                    </div>
+                </div>
+            </t>
+        </div>
+
+        <button class="vd-tb-refresh" t-on-click="onRefresh" title="Refresh">&#8635;</button>
+    </div>
+
+</t>
+
+</templates>

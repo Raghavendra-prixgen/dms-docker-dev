@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="vahini_dashboard.DataTable">
+    <div class="vd-dt" t-on-click.stop="">
+
+        <!-- Header -->
+        <div class="vd-dt-hdr">
+            <div class="vd-dt-hdr-left">
+                <!-- Searchable dropdown -->
+                <div class="vd-dt-drop-wrap">
+                    <div class="vd-dt-drop-trigger" t-on-click="toggleDrop">
+                        <span class="vd-dt-drop-label"><t t-esc="groupLabel"/></span>
+                        <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2">
+                            <t t-if="state.showDrop"><polyline points="18 15 12 9 6 15"/></t>
+                            <t t-else=""><polyline points="6 9 12 15 18 9"/></t>
+                        </svg>
+                    </div>
+                    <t t-if="state.showDrop">
+                        <div class="vd-dt-dropdown" t-on-click.stop="">
+                            <div class="vd-dt-srch-wrap">
+                                <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                                <input class="vd-dt-srch-inp" placeholder="Search..."
+                                       t-att-value="state.searchInput"
+                                       t-on-input="onDropSearch"/>
+                            </div>
+                            <div class="vd-dt-opts">
+                                <t t-foreach="filteredOptions" t-as="opt" t-key="opt.value">
+                                    <div t-att-class="'vd-dt-opt'+(state.groupBy===opt.value?' sel':'')"
+                                         t-on-click="()=>this.selectGroup(opt.value)">
+                                        <t t-esc="opt.label"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+                <span class="vd-dt-badge"><t t-esc="fmtCount(state.total)"/></span>
+            </div>
+            <div class="vd-dt-hdr-right">
+                <button class="vd-dt-icon-btn">
+                    <t t-call="vahini_dashboard.Icon"><t t-set="icon" t-value="'expand'"/><t t-set="size" t-value="11"/></t>
+                </button>
+                <div class="vd-dt-dl-wrap">
+                    <button class="vd-dt-dl-btn" t-on-click="toggleMenu">
+                        <t t-call="vahini_dashboard.Icon"><t t-set="icon" t-value="'download'"/><t t-set="size" t-value="11"/></t>
+                    </button>
+                    <div t-att-class="'vd-dl-menu' + (state.menuOpen ? ' open' : '')">
+                        <button class="vd-dl-item" t-on-click="dlPDF">
+                            <t t-call="vahini_dashboard.Icon"><t t-set="icon" t-value="'pdf'"/><t t-set="size" t-value="11"/></t>PDF
+                        </button>
+                        <button class="vd-dl-item" t-on-click="dlExcel">
+                            <t t-call="vahini_dashboard.Icon"><t t-set="icon" t-value="'excel'"/><t t-set="size" t-value="11"/></t>Excel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <t t-if="state.loading">
+            <div class="vd-dt-loading"><div class="vd-spinner"/></div>
+        </t>
+
+        <!-- Table -->
+        <t t-if="!state.loading">
+            <div class="vd-dt-body">
+                <table class="vd-dt-table">
+                    <thead>
+                        <tr>
+                            <th class="vd-dt-th left" t-on-click="()=>this.sortBy('name')">
+                                <t t-esc="groupLabel"/><t t-esc="sortIndicator('name')"/>
+                                <t t-if="!sortIndicator('name')"><span style="opacity:.3">&#8597;</span></t>
+                            </th>
+                            <th class="vd-dt-th" t-on-click="()=>this.sortBy('sales')">
+                                Sales<t t-esc="sortIndicator('sales')"/>
+                                <t t-if="!sortIndicator('sales')"><span style="opacity:.3">&#8597;</span></t>
+                            </th>
+                            <th class="vd-dt-th" t-on-click="()=>this.sortBy('avg')">
+                                Avg (6)<t t-esc="sortIndicator('avg')"/>
+                                <t t-if="!sortIndicator('avg')"><span style="opacity:.3">&#8597;</span></t>
+                            </th>
+                            <th class="vd-dt-th" t-on-click="()=>this.sortBy('contrib')">
+                                Contr<t t-esc="sortIndicator('contrib')"/>
+                                <t t-if="!sortIndicator('contrib')"><span style="opacity:.3">&#8597;</span></t>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="sorted" t-as="row" t-key="row_index">
+                            <tr class="vd-dt-row">
+                                <td class="vd-dt-td left"><t t-esc="row.name"/></td>
+                                <td class="vd-dt-td"><t t-esc="fmtNum(row.tax_less)"/></td>
+                                <td class="vd-dt-td"><t t-esc="fmtNum(row.asp)"/></td>
+                                <td class="vd-dt-td"><t t-esc="row.contrib"/>%</td>
+                            </tr>
+                        </t>
+                        <t t-if="!state.rows.length">
+                            <tr><td colspan="4" class="vd-dt-empty">No data</td></tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+
+        <!-- Pagination -->
+        <div class="vd-dt-pager">
+            <button class="vd-pg" t-att-disabled="isPrevDisabled()?'':undefined" t-on-click="prevPage">&#8249;</button>
+            <t t-foreach="pageNums" t-as="p" t-key="p_index">
+                <t t-if="p==='...'"><span class="vd-pg-dot">&#183;&#183;&#183;</span></t>
+                <t t-else="">
+                    <button t-att-class="'vd-pg'+(isCurrentPage(p)?' on':'')" t-on-click="()=>this.goPage(p)"><t t-esc="p"/></button>
+                </t>
+            </t>
+            <button class="vd-pg" t-att-disabled="isNextDisabled()?'':undefined" t-on-click="nextPage">&#8250;</button>
+        </div>
+
+    </div>
+</t>
+
+</templates>

@@ -1,0 +1,630 @@
+
+.dvw-root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #fff;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 13px;
+    color: var(--text1, #1e293b);
+
+    [data-theme="dark"] & { background: var(--card, #1a2234); }
+}
+
+
+
+
+.dvw-date-wrap { position: relative; }
+
+.dvw-date-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 7px;
+    border: 1px solid var(--border, #e2e8f0);
+    background: #fff;
+    color: var(--text1, #1e293b);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover { border-color: #4f6df5; }
+
+    [data-theme="dark"] & {
+        background: var(--card, #1a2234);
+        border-color: var(--border, #2d3748);
+    }
+}
+
+.dvw-icon-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 7px;
+    border: 1px solid var(--border, #e2e8f0);
+    background: #fff;
+    color: var(--text2, #64748b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    &:hover {
+        background: var(--bg, #f0f2f5);
+        color: var(--text1, #1e293b);
+    }
+
+    [data-theme="dark"] & {
+        background: var(--card, #1a2234);
+        border-color: var(--border, #2d3748);
+    }
+}
+
+.dvw-picker {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: var(--card, #fff);
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.14);
+    padding: 14px;
+    z-index: 500;
+    min-width: 235px;
+}
+
+.dvw-picker-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+
+    label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text2, #64748b);
+        width: 36px;
+        flex-shrink: 0;
+    }
+
+    input[type="date"] {
+        flex: 1;
+        padding: 5px 8px;
+        border: 1px solid var(--border, #e2e8f0);
+        border-radius: 6px;
+        font-size: 12px;
+        background: var(--bg, #f0f2f5);
+        color: var(--text1, #1e293b);
+        outline: none;
+        cursor: pointer;
+        &:focus { border-color: #4f6df5; }
+    }
+}
+
+.dvw-picker-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 4px;
+}
+
+.dvw-p-cancel {
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border, #e2e8f0);
+    background: var(--bg, #f0f2f5);
+    color: var(--text2, #64748b);
+    font-size: 11px;
+    cursor: pointer;
+    &:hover { background: #fee2e2; color: #dc2626; }
+}
+
+.dvw-p-apply {
+    padding: 5px 14px;
+    border-radius: 6px;
+    border: none;
+    background: #4f6df5;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    &:hover { background: #3b57d4; }
+}
+
+// ══ VIEW TABS: Transactions | Bank ══════════════════════════════
+
+.dvw-view-tabs {
+    display: flex !important;
+    align-items: center;
+    gap: 0;
+    flex-shrink: 0;
+}
+
+.dvw-view-tab {
+    padding: 8px 22px;
+    border-radius: 8px;
+    border: 1.5px solid #e2e8f0;
+    background: #fff;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+
+    &.active {
+        background: #4f6df5;
+        color: #fff;
+        border-color: #4f6df5;
+    }
+
+    &:not(.active):hover {
+        border-color: #4f6df5;
+        color: #4f6df5;
+    }
+
+    [data-theme="dark"] & {
+        background: var(--card, #1a2234);
+        border-color: var(--border, #2d3748);
+        color: var(--text2, #94a3b8);
+    }
+}
+
+
+.dvw-sub-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px 8px;
+    flex-shrink: 0;
+    gap: 10px;
+}
+
+.dvw-col-toggle {
+    width: 34px;
+    height: 34px;
+    border-radius: 7px;
+    border: 1px solid var(--border, #e2e8f0);
+    background: #fff;
+    color: var(--text2, #64748b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+
+    &:hover { background: var(--bg, #f0f2f5); color: var(--text1, #1e293b); }
+
+    [data-theme="dark"] & {
+        background: var(--card, #1a2234);
+        border-color: var(--border, #2d3748);
+    }
+}
+
+.dvw-sub-pills {
+    margin-left: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.dvw-sub-pill {
+    padding: 6px 18px;
+    border-radius: 8px;
+    border: 1.5px solid #e2e8f0;
+    background: #fff;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+
+    &.active {
+        background: #4f6df5;
+        color: #fff;
+        border-color: #4f6df5;
+    }
+
+    &:not(.active):hover {
+        border-color: #4f6df5;
+        color: #4f6df5;
+    }
+
+    [data-theme="dark"] & {
+        background: var(--card, #1a2234);
+        border-color: var(--border, #2d3748);
+        color: var(--text2, #94a3b8);
+    }
+}
+
+
+.dvw-table-wrap {
+    flex: 1;
+    overflow: auto;
+    padding: 0;
+}
+
+.dvw-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+
+    thead {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+}
+
+
+.dvw-sum-row th {
+    background: #dce8ff;
+    padding: 7px 12px;
+    font-size: 11.5px;
+    font-weight: 600;
+    border-bottom: 1px solid #b8d0f8;
+    white-space: nowrap;
+    vertical-align: middle;
+    text-align: left;
+
+    [data-theme="dark"] & {
+        background: rgba(79,109,245,.18);
+        border-bottom-color: rgba(79,109,245,.3);
+    }
+}
+
+.dvw-th-num {
+    text-align: right !important;
+}
+
+.dvw-sum-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 500;
+    color: #4f6df5;
+    opacity: 0.75;
+    line-height: 1.2;
+}
+
+.dvw-sum-badge {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.3;
+
+    [data-theme="dark"] & { color: #e2e8f0; }
+}
+
+.dvw-sum-blue {
+    color: #1a56db !important;
+    [data-theme="dark"] & { color: #93aeff !important; }
+}
+
+.dvw-sum-pill {
+    display: inline-block;
+    background: #4f6df5;
+    color: #fff;
+    border-radius: 5px;
+    padding: 1px 7px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin-top: 2px;
+}
+
+.dvw-sum-arrows {
+    display: inline-block;
+    font-size: 10px;
+    color: #4f6df5;
+    opacity: 0.55;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+
+
+.dvw-tr {
+    td {
+        padding: 9px 12px;
+        color: var(--text1, #1e293b);
+        border-bottom: 1px solid #f0f2f5;
+        font-size: 12px;
+        white-space: nowrap;
+        text-align: left;
+        background: #fff;
+        transition: background .08s;
+
+        [data-theme="dark"] & {
+            background: var(--card, #1a2234);
+            border-bottom-color: var(--border, #2d3748);
+        }
+    }
+
+    &:nth-child(even) td {
+        background: #f8fafc;
+        [data-theme="dark"] & { background: #1a2744; }
+    }
+
+    &:hover td {
+        background: #f0f5ff !important;
+        [data-theme="dark"] & { background: #1e2d4a !important; }
+    }
+}
+
+.dvw-td-left { min-width: 130px; }
+
+.dvw-td-num {
+    text-align: right !important;
+    font-variant-numeric: tabular-nums;
+}
+
+.dvw-td-loading,
+.dvw-td-empty {
+    text-align: center !important;
+    padding: 48px 20px !important;
+    color: var(--text2, #64748b);
+    font-size: 12px;
+}
+
+
+.dvw-pager {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 3px;
+    padding: 10px 14px;
+    border-top: 1px solid #f0f2f5;
+    background: #fff;
+    flex-shrink: 0;
+
+    [data-theme="dark"] & {
+        background: var(--card, #1a2234);
+        border-top-color: var(--border, #2d3748);
+    }
+}
+
+.dvw-pg-btn {
+    min-width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #1e293b;
+    font-size: 12px;
+    padding: 0 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .12s;
+
+    &:hover:not([disabled]) {
+        background: #4f6df5;
+        color: #fff;
+        border-color: #4f6df5;
+    }
+
+    &.on {
+        background: #4f6df5 !important;
+        color: #fff !important;
+        border-color: #4f6df5 !important;
+        font-weight: 700;
+    }
+
+    &[disabled] {
+        opacity: 0.35;
+        cursor: not-allowed;
+    }
+
+    [data-theme="dark"] & {
+        background: var(--card, #1a2234);
+        border-color: var(--border, #2d3748);
+        color: var(--text1, #e2e8f0);
+    }
+}
+
+.dvw-pg-dot {
+    color: var(--text2, #64748b);
+    font-size: 13px;
+    padding: 0 4px;
+    letter-spacing: 1px;
+}
+
+
+.dvw-root .vd-spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid rgba(79,109,245,.2);
+    border-top-color: #4f6df5;
+    border-radius: 50%;
+    animation: dvw-spin .7s linear infinite;
+}
+
+@keyframes dvw-spin {
+    to { transform: rotate(360deg); }
+}
+/* ── Sale Register Report: wide table support ─────────────────────── */
+.dvw-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.dvw-table {
+    min-width: max-content;
+    white-space: nowrap;
+}
+
+.dvw-table th,
+.dvw-table td {
+    min-width: 110px;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dvw-table th:first-child,
+.dvw-table td:first-child {
+    min-width: 140px;
+    position: sticky;
+    left: 0;
+    background: var(--bg1, #fff);
+    z-index: 2;
+}
+
+.dvw-table thead th:first-child {
+    z-index: 3;
+}
+
+// ── Ctrl bar: Transactions|Bank + Filter|Columns|Download ─────────────────────
+.dvw-ctrl-bar {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0 10px;
+    width: 100%;
+    position: relative;
+    overflow: visible !important;
+}
+.dvw-view-tabs { display: flex; gap: 0; }
+.dvw-view-tab {
+    display: inline-flex !important;
+    align-items: center;
+    padding: 7px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid var(--border, #e2e8f0);
+    background: var(--card, #fff);
+    cursor: pointer;
+    color: var(--text2, #64748b);
+
+    &:first-child { border-radius: 8px 0 0 8px; }
+    &:last-child  { border-radius: 0 8px 8px 0; margin-left: -1px; }
+    &.active { background: #4f6df5; color: #fff; border-color: #4f6df5; }
+    &:hover:not(.active) { color: #4f6df5; border-color: #4f6df5; }
+}
+.dvw-icon-group {
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 21;
+    background: #fff;
+    padding-left: 8px;
+
+    [data-theme="dark"] & { background: var(--card, #1a2234); }
+}
+
+.dvw-icon-btn {
+    width: 34px !important;
+    height: 34px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 8px;
+    background: var(--card, #fff);
+    cursor: pointer;
+    color: var(--text2, #64748b);
+    flex-shrink: 0;
+
+    &:hover { border-color: #4f6df5; color: #4f6df5; background: #eef2ff; }
+}
+.dvw-col-wrap { position: relative; }
+// .dvw-col-menu {
+//     position: absolute; top: calc(100% + 6px); right: 0; z-index: 9999;
+//     background: var(--card, #fff); border: 1px solid var(--border, #e2e8f0);
+//     border-radius: 10px; box-shadow: 0 8px 28px rgba(0,0,0,.18);
+//     width: 220px; display: flex; flex-direction: column;
+// }
+.dvw-col-menu {
+    position: fixed;     // ← fixed instead of absolute — escapes ALL overflow contexts
+    z-index: 99999;
+    background: var(--card, #fff);
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 10px;
+    box-shadow: 0 8px 28px rgba(0,0,0,.18);
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+}
+.dvw-col-menu-hdr {
+    padding: 10px 12px; border-bottom: 1px solid var(--border, #e2e8f0);
+    display: flex; flex-direction: column; gap: 8px;
+}
+.dvw-col-search {
+    width: 100%; padding: 6px 10px; box-sizing: border-box;
+    border: 1px solid var(--border, #e2e8f0); border-radius: 6px;
+    font-size: 12px; outline: none;
+    &:focus { border-color: #4f6df5; }
+    &::placeholder { color: var(--text2); }
+}
+.dvw-col-menu-actions {
+    display: flex; gap: 6px;
+    button {
+        flex: 1; padding: 4px 8px; border-radius: 6px; font-size: 11px;
+        border: 1px solid var(--border, #e2e8f0);
+        background: var(--bg, #f8fafc); cursor: pointer;
+        &:hover { background: #eef2ff; color: #4f6df5; }
+    }
+}
+.dvw-col-list {
+    max-height: 300px; overflow-y: auto;
+    padding: 6px 0; display: flex; flex-direction: column;
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+}
+.dvw-col-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 14px; cursor: pointer; font-size: 12px;
+    color: var(--text1); user-select: none;
+    &:hover { background: #eef2ff; }
+    input[type="checkbox"] {
+        width: 14px; height: 14px; cursor: pointer;
+        accent-color: #4f6df5; flex-shrink: 0;
+    }
+    span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}
+// Sub row: Sales|Return|DN|CN
+.dvw-sub-row {
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 0 8px;
+    flex-shrink: 0;
+    overflow: visible !important;
+}
+
+.dvw-sub-pills {
+    display: flex !important;
+    align-items: center;
+    gap: 4px;
+    margin-left: 0;
+}
+.dvw-sub-pill {
+    display: inline-flex !important;
+    align-items: center;
+    padding: 5px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid var(--border, #e2e8f0);
+    background: var(--card, #fff);
+    cursor: pointer;
+    color: var(--text2, #64748b);
+
+    &.active { background: #4f6df5; color: #fff; border-color: #4f6df5; }
+    &:hover:not(.active) { color: #4f6df5; border-color: #4f6df5; }
+}
+
+// dvw-fixed-bar: contains ctrl-bar + sub-row, never scrolls with table
+.dvw-fixed-bar {
+    position: relative;
+    z-index: 20;
+    background: #fff;
+    flex-shrink: 0;
+    padding: 8px 14px 0;
+    overflow: visible !important;
+    [data-theme="dark"] & { background: var(--card, #1a2234); }
+}

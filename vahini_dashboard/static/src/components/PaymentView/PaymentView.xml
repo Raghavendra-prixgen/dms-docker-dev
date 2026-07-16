@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="vahini_dashboard.PaymentView">
+<div class="pvw-root">
+
+    <!-- Header -->
+    <div class="pvw-header">
+        <div class="pvw-title-row">
+            <div class="pvw-type-tabs">
+                <button t-att-class="'pvw-type-btn'+(state.reportType==='receivable'?' active':'')"
+                        t-on-click="() => this.switchType('receivable')">Receivable</button>
+                <button t-att-class="'pvw-type-btn'+(state.reportType==='payable'?' active':'')"
+                        t-on-click="() => this.switchType('payable')">Payable</button>
+            </div>
+            <h2 class="pvw-title">Payment Report</h2>
+        </div>
+        <div class="pvw-action-bar">
+            <button class="pvw-reminder-btn" t-on-click="openReminder">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                Auto Set Reminder
+            </button>
+            <div class="pvw-search-wrap">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input class="pvw-search" placeholder="Search" t-on-input="onSearch"/>
+            </div>
+            <button class="pvw-icon-btn" title="Download PDF" t-on-click="downloadPDF">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- KPI row -->
+    <div class="pvw-kpi-row">
+        <div class="pvw-kpi pvw-kpi-recv"><div class="pvw-kpi-label">Receivable</div><div class="pvw-kpi-val"><t t-esc="fmtKpi(state.kpis.receivable)"/></div></div>
+        <div class="pvw-kpi pvw-kpi-pay"><div class="pvw-kpi-label">Payable</div><div class="pvw-kpi-val"><t t-esc="fmtKpi(state.kpis.payable)"/></div></div>
+        <div class="pvw-kpi pvw-kpi-050"><div class="pvw-kpi-label">0-50</div><div class="pvw-kpi-val"><t t-esc="fmtKpi(state.kpis.range_0_50)"/></div><div class="pvw-kpi-bills"><t t-esc="state.kpis.bills_0_50||0"/> Bills</div><div class="pvw-kpi-sub"><t t-esc="fmtKpi(state.kpis.sub_0_50)"/></div></div>
+        <div class="pvw-kpi pvw-kpi-5190"><div class="pvw-kpi-label">51-90</div><div class="pvw-kpi-val"><t t-esc="fmtKpi(state.kpis.range_51_90)"/></div><div class="pvw-kpi-bills"><t t-esc="state.kpis.bills_51_90||0"/> Bills</div><div class="pvw-kpi-sub"><t t-esc="fmtKpi(state.kpis.sub_51_90)"/></div></div>
+        <div class="pvw-kpi pvw-kpi-90p"><div class="pvw-kpi-label">&gt;90</div><div class="pvw-kpi-val"><t t-esc="fmtKpi(state.kpis.over_90)"/></div><div class="pvw-kpi-bills"><t t-esc="state.kpis.bills_over_90||0"/> Bills</div><div class="pvw-kpi-sub"><t t-esc="fmtKpi(state.kpis.sub_over_90)"/></div></div>
+        <div class="pvw-kpi pvw-kpi-other"><div class="pvw-kpi-label">Other</div><div class="pvw-kpi-val"><t t-esc="fmtKpi(state.kpis.other)"/></div><div class="pvw-kpi-bills"><t t-esc="state.kpis.bills_other||0"/> Bills</div><div class="pvw-kpi-sub"><t t-esc="fmtKpi(state.kpis.sub_other)"/></div></div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="pvw-filter-bar">
+        <label class="pvw-chk">
+            <input type="checkbox" t-att-checked="state.filterOverDue?'checked':undefined" t-on-change="() => this.toggleFilter('filterOverDue')"/>
+            <span class="pvw-chk-box pvw-chk-od"/><span>Over Due</span>
+        </label>
+        <label class="pvw-chk">
+            <input type="checkbox" t-att-checked="state.filterNotDue?'checked':undefined" t-on-change="() => this.toggleFilter('filterNotDue')"/>
+            <span class="pvw-chk-box pvw-chk-nd"/><span>Not Due</span>
+        </label>
+        <label class="pvw-chk">
+            <input type="checkbox" t-att-checked="state.filterPostDated?'checked':undefined" t-on-change="() => this.toggleFilter('filterPostDated')"/>
+            <span class="pvw-chk-box pvw-chk-pd"/><span>Post Dated</span>
+        </label>
+        <select class="pvw-due-select" t-on-change="onDueFilterChange">
+            <option value="all">All Dues</option>
+            <option value="overdue">Over Due</option>
+            <option value="not_due">Not Due</option>
+            <option value="post_dated">Post Dated</option>
+        </select>
+        <div class="pvw-date-wrap">
+            <input type="date" class="pvw-date-input" t-att-value="state.asOfDate" t-on-change="onDateChange"/>
+            <button class="pvw-date-apply" t-on-click="applyDate">Go</button>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="pvw-table-wrap">
+        <t t-if="state.loading">
+            <div class="pvw-loading"><div class="vd-spinner"/><span>Loading data&#8230;</span></div>
+        </t>
+        <t t-if="!state.loading">
+            <table class="pvw-table">
+                <thead><tr>
+                    <th class="pvw-th-partner" t-on-click="() => this.sortBy('partner')">Customer / Vendor <span class="pvw-sort-ico"><t t-esc="isSorted('partner','asc')?'↑':isSorted('partner','desc')?'↓':'⇅'"/></span></th>
+                    <th class="pvw-th-num" t-on-click="() => this.sortBy('range_0_50')">0-50 <span class="pvw-sort-ico"><t t-esc="isSorted('range_0_50','asc')?'↑':isSorted('range_0_50','desc')?'↓':'⇅'"/></span></th>
+                    <th class="pvw-th-num" t-on-click="() => this.sortBy('range_51_90')">51-90 <span class="pvw-sort-ico"><t t-esc="isSorted('range_51_90','asc')?'↑':isSorted('range_51_90','desc')?'↓':'⇅'"/></span></th>
+                    <th class="pvw-th-num" t-on-click="() => this.sortBy('overdue')">Over 90 <span class="pvw-sort-ico"><t t-esc="isSorted('overdue','asc')?'↑':isSorted('overdue','desc')?'↓':'⇅'"/></span></th>
+                    <th class="pvw-th-num" t-on-click="() => this.sortBy('outstanding')">Outstanding <span class="pvw-sort-ico"><t t-esc="isSorted('outstanding','asc')?'↑':isSorted('outstanding','desc')?'↓':'⇅'"/></span></th>
+                    <th class="pvw-th-num" t-on-click="() => this.sortBy('other')">Other <span class="pvw-sort-ico"><t t-esc="isSorted('other','asc')?'↑':isSorted('other','desc')?'↓':'⇅'"/></span></th>
+                    <th class="pvw-th-num" t-on-click="() => this.sortBy('interest')">Interest <span class="pvw-sort-ico"><t t-esc="isSorted('interest','asc')?'↑':isSorted('interest','desc')?'↓':'⇅'"/></span></th>
+                    <th class="pvw-th-num" t-on-click="() => this.sortBy('total')">Total Outstanding <span class="pvw-sort-ico"><t t-esc="isSorted('total','asc')?'↑':isSorted('total','desc')?'↓':'⇅'"/></span></th>
+                    <th class="pvw-th-act"/>
+                </tr></thead>
+                <tbody>
+                    <t t-foreach="pageRows" t-as="row" t-key="row.partner_id">
+                        <tr class="pvw-tr">
+                            <td class="pvw-td-partner"><t t-esc="row.partner"/></td>
+                            <td t-att-class="'pvw-td-num '+cls(row.range_0_50)"><t t-esc="fmt(row.range_0_50)"/></td>
+                            <td t-att-class="'pvw-td-num '+cls(row.range_51_90)"><t t-esc="fmt(row.range_51_90)"/></td>
+                            <td t-att-class="'pvw-td-num '+cls(row.overdue)"><t t-esc="fmt(row.overdue)"/></td>
+                            <td t-att-class="'pvw-td-num '+cls(row.outstanding)"><t t-esc="fmt(row.outstanding)"/></td>
+                            <td t-att-class="'pvw-td-num '+cls(row.other)"><t t-esc="fmt(row.other)"/></td>
+                            <td t-att-class="'pvw-td-num '+cls(row.interest)"><t t-esc="fmt(row.interest)"/></td>
+                            <td t-att-class="'pvw-td-num pvw-td-total '+cls(row.total)"><t t-esc="fmt(row.total)"/></td>
+                            <td class="pvw-td-act">
+                                <button class="pvw-row-btn" title="Communication History"
+                                        t-on-click="() => this.openComm(row)">
+                                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                    </t>
+                    <t t-if="!state.filteredRows.length and !state.loading">
+                        <tr><td colspan="9" class="pvw-empty">No records found</td></tr>
+                    </t>
+                </tbody>
+            </table>
+        </t>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pvw-pager" t-if="state.totalPages > 1">
+        <button class="pvw-pg-btn" t-att-disabled="state.page===1?'':undefined" t-on-click="prevPage">&#8249;</button>
+        <t t-foreach="pageNums" t-as="p" t-key="p_index">
+            <t t-if="p==='...'"><span class="pvw-pg-dot">&#8230;</span></t>
+            <t t-else=""><button t-att-class="'pvw-pg-btn'+(state.page===p?' on':'')" t-on-click="() => this.goPage(p)"><t t-esc="p"/></button></t>
+        </t>
+        <button class="pvw-pg-btn" t-att-disabled="state.page===state.totalPages?'':undefined" t-on-click="nextPage">&#8250;</button>
+    </div>
+
+    <!-- ── Auto Reminder popup ──────────────────────────────── -->
+    <t t-if="state.reminderOpen">
+        <div class="pvw-overlay" t-on-click="closeReminder"/>
+        <div class="pvw-popup">
+            <div class="pvw-popup-head"><span>Auto Set Reminder</span><button class="pvw-popup-close" t-on-click="closeReminder">&#10005;</button></div>
+            <div class="pvw-popup-body">
+                <div class="pvw-popup-icon"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#4f6df5" stroke-width="1.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+                <p class="pvw-popup-msg">Send reminders to <strong><t t-esc="state.reminderCount"/></strong> overdue customer(s)?</p>
+                <p class="pvw-popup-sub">Reminders will be queued for all customers with overdue balances.</p>
+            </div>
+            <div class="pvw-popup-foot">
+                <button class="pvw-popup-cancel" t-on-click="closeReminder">Cancel</button>
+                <button class="pvw-popup-confirm" t-on-click="confirmReminder">Send Reminders</button>
+            </div>
+        </div>
+    </t>
+
+    <!-- ── Communication History side panel ────────────────── -->
+    <t t-if="state.commOpen">
+        <div class="pvw-overlay" t-on-click="closeComm"/>
+        <div class="pvw-comm-panel">
+
+            <!-- Panel header -->
+            <div class="pvw-comm-head">
+                <div class="pvw-comm-title">Communication History</div>
+                <div class="pvw-comm-icons">
+                    <!-- Snooze -->
+                    <button t-att-class="'pvw-comm-icon-btn pvw-ci-snooze'+(state.activePopup==='snooze'?' active':'')"
+                            title="Snooze" t-on-click="() => this.openPopup('snooze')">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    </button>
+                    <!-- Call -->
+                    <button t-att-class="'pvw-comm-icon-btn pvw-ci-call'+(state.activePopup==='call'?' active':'')"
+                            title="Log Call" t-on-click="() => this.openPopup('call')">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    </button>
+                    <!-- WhatsApp -->
+                    <button t-att-class="'pvw-comm-icon-btn pvw-ci-wa'+(state.activePopup==='whatsapp'?' active':'')"
+                            title="WhatsApp" t-on-click="() => this.openPopup('whatsapp')">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+                    </button>
+                    <!-- Email -->
+                    <button t-att-class="'pvw-comm-icon-btn pvw-ci-email'+(state.activePopup==='email'?' active':'')"
+                            title="Send Email" t-on-click="() => this.openPopup('email')">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    </button>
+                    <button class="pvw-comm-close" t-on-click="closeComm">&#10005;</button>
+                </div>
+            </div>
+
+            <!-- Partner name -->
+            <div class="pvw-comm-partner">
+                <strong><t t-esc="state.commPartner.name"/></strong>
+            </div>
+
+            <!-- Sub-popup: Snooze -->
+            <t t-if="state.activePopup === 'snooze'">
+                <div class="pvw-sub-popup">
+                    <div class="pvw-sp-head">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                        <span>1 <t t-esc="state.commPartner.name"/></span>
+                    </div>
+                    <label class="pvw-sp-label">Remarks <span class="pvw-required">*</span></label>
+                    <textarea class="pvw-sp-textarea" placeholder="Enter remarks..."
+                              t-att-value="state.snoozeRemark" t-on-input="onSnoozeRemark"/>
+                    <div class="pvw-sp-charcount"><t t-esc="(state.snoozeRemark||'').length"/> / 500</div>
+                    <label class="pvw-sp-label">Snooze Until <span class="pvw-required">*</span></label>
+                    <div class="pvw-sp-datewrap">
+                        <input type="datetime-local" class="pvw-sp-dateinput"
+                               t-att-value="state.snoozeUntil" t-on-change="onSnoozeUntil"
+                               placeholder="Select date and time"/>
+                    </div>
+                    <div class="pvw-sp-actions">
+                        <button class="pvw-sp-cancel" t-on-click="closePopup">Cancel</button>
+                        <button class="pvw-sp-submit" t-on-click="submitSnooze">Snooze</button>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Sub-popup: Call -->
+            <t t-if="state.activePopup === 'call'">
+                <div class="pvw-sub-popup">
+                    <div class="pvw-sp-head">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 13.19 19a19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 4.12 4.18 2 2 0 0 1 6.1 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L10 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 24 16.92z"/></svg>
+                        <span>1 <t t-esc="state.commPartner.name"/></span>
+                    </div>
+                    <label class="pvw-sp-label">Call Status</label>
+                    <div class="pvw-sp-dropdown-wrap">
+                        <div class="pvw-sp-dropdown-btn" t-on-click="toggleCallDD">
+                            <t t-if="state.callStatus==='answered'">
+                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#22c55e" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 13.19 19a19.5 19.5 0 0 1-6-6"/></svg>
+                                Call Answered
+                            </t>
+                            <t t-else="">
+                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#ef4444" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.5 16.5L15 15M3.35 3.35A17.91 17.91 0 0 0 2 12"/></svg>
+                                Call Unanswered
+                            </t>
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
+                        <t t-if="state.callStatusOpen">
+                            <div class="pvw-sp-dropdown-list">
+                                <div class="pvw-sp-dd-item" t-on-click="() => this.setCallStatus('unanswered')">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#ef4444" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"/><path d="M3.35 3.35A17.91 17.91 0 0 0 2 12"/></svg>
+                                    Call Unanswered
+                                </div>
+                                <div class="pvw-sp-dd-item" t-on-click="() => this.setCallStatus('answered')">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#22c55e" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 13.19 19a19.5 19.5 0 0 1-6-6"/></svg>
+                                    Call Answered
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                    <textarea class="pvw-sp-textarea pvw-sp-textarea-sm" placeholder="Add notes..."
+                              t-att-value="state.callNote" t-on-input="onCallNote"/>
+                    <div class="pvw-sp-charcount"><t t-esc="(state.callNote||'').length"/> / 500</div>
+                    <div class="pvw-sp-actions">
+                        <button class="pvw-sp-cancel" t-on-click="closePopup">Cancel</button>
+                        <button class="pvw-sp-submit" t-on-click="submitCall">Submit</button>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Sub-popup: WhatsApp -->
+            <t t-if="state.activePopup === 'whatsapp'">
+                <div class="pvw-sub-popup">
+                    <div class="pvw-sp-head pvw-sp-head-wa">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+                        <span>1 <t t-esc="state.commPartner.name"/></span>
+                    </div>
+                    <label class="pvw-sp-label">Select Number</label>
+                    <input class="pvw-sp-input" t-att-value="state.waNumber" t-on-input="onWaNumber" placeholder="+91 9xxxxxxxxx"/>
+                    <label class="pvw-sp-label">Message</label>
+                    <textarea class="pvw-sp-textarea" t-att-value="state.waMessage" t-on-input="onWaMessage"/>
+                    <div class="pvw-sp-charcount"><t t-esc="(state.waMessage||'').length"/> / 500</div>
+                    <div class="pvw-sp-attach-head">Attachments Options</div>
+                    <label class="pvw-sp-chk"><input type="checkbox" t-att-checked="state.waAddStatement?'checked':undefined" t-on-change="toggleWaStatement"/> Add Outstanding Statement</label>
+                    <label class="pvw-sp-chk"><input type="checkbox" t-att-checked="state.waAddLedger?'checked':undefined" t-on-change="toggleWaLedger"/> Add Ledger</label>
+                    <div class="pvw-sp-actions">
+                        <button class="pvw-sp-cancel" t-on-click="closePopup">Cancel</button>
+                        <button class="pvw-sp-submit pvw-sp-wa-btn" t-on-click="submitWhatsApp">Send WhatsApp</button>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Sub-popup: Email -->
+            <t t-if="state.activePopup === 'email'">
+                <div class="pvw-sub-popup">
+                    <div class="pvw-sp-head">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#4f6df5" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        <span>1 <t t-esc="state.commPartner.name"/></span>
+                    </div>
+                    <label class="pvw-sp-label">Select Email</label>
+                    <input class="pvw-sp-input" t-att-value="state.emailTo" t-on-input="onEmailTo" placeholder="email@example.com"/>
+                    <div class="pvw-sp-attach-head">Attachments Options</div>
+                    <p class="pvw-sp-attach-hint">Select at least one attachment to enable sending.</p>
+                    <label class="pvw-sp-chk"><input type="checkbox" t-att-checked="state.emailAddStatement?'checked':undefined" t-on-change="toggleEmailStatement"/> Add Outstanding Statement</label>
+                    <label class="pvw-sp-chk"><input type="checkbox" t-att-checked="state.emailAddLedger?'checked':undefined" t-on-change="toggleEmailLedger"/> Add Ledger</label>
+                    <div class="pvw-sp-actions">
+                        <button class="pvw-sp-cancel" t-on-click="closePopup">Cancel</button>
+                        <button class="pvw-sp-submit"
+                                t-on-click="submitEmail"
+                                t-att-disabled="state.emailSending ? '' : undefined">
+                            <t t-if="state.emailSending">Sending&#8230;</t>
+                            <t t-else="">Send Email</t>
+                        </button>
+                    </div>
+                </div>
+            </t>
+
+            <!-- History list -->
+            <div class="pvw-comm-history">
+                <t t-if="!state.commHistory.length">
+                    <div class="pvw-comm-empty">
+                        <svg viewBox="0 0 80 80" width="70" height="70" fill="none">
+                            <rect x="15" y="20" width="50" height="40" rx="4" fill="#2d3748"/>
+                            <rect x="20" y="28" width="30" height="3" rx="1" fill="#4a5568"/>
+                            <rect x="20" y="35" width="25" height="3" rx="1" fill="#4a5568"/>
+                            <circle cx="58" cy="22" r="10" fill="#3d4a5c"/>
+                            <circle cx="54" cy="20" r="2" fill="#718096"/>
+                            <circle cx="58" cy="20" r="2" fill="#718096"/>
+                            <circle cx="62" cy="20" r="2" fill="#718096"/>
+                        </svg>
+                        <span>No communication history found</span>
+                    </div>
+                </t>
+                <t t-foreach="state.commHistory" t-as="h" t-key="h_index">
+                    <div class="pvw-hist-item">
+                        <span class="pvw-hist-icon"><t t-esc="histIcon(h.type)"/></span>
+                        <div class="pvw-hist-body">
+                            <div class="pvw-hist-text"><t t-esc="h.text"/></div>
+                            <div class="pvw-hist-date"><t t-esc="h.date"/></div>
+                        </div>
+                    </div>
+                </t>
+            </div>
+
+            <!-- Bottom remark bar -->
+            <div class="pvw-comm-footer">
+                <div class="pvw-remark-type-wrap">
+                    <select class="pvw-remark-type" t-on-change="onRemarkTypeChange">
+                        <option value="remark">💬</option>
+                        <option value="call">📞</option>
+                        <option value="email">✉️</option>
+                        <option value="whatsapp">💬</option>
+                    </select>
+                    <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+                <input class="pvw-remark-input" placeholder="Add a remark..."
+                       t-att-value="state.commRemark" t-on-input="onRemarkInput"
+                       t-on-keydown="(ev) => ev.key==='Enter' &amp;&amp; this.submitRemark()"/>
+                <button class="pvw-remark-send" t-on-click="submitRemark">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+            </div>
+        </div>
+    </t>
+
+</div>
+</t>
+
+</templates>

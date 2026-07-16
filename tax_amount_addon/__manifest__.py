@@ -1,0 +1,15 @@
+{
+    'name': "Tax Amount Addon -18.0.0.3",
+    'summary': """Tax Amount Addon""",
+    'description': """ """,
+    'module_type':'official',
+    'author': "Prixgen Tech Solutions Pvt. Ltd.",
+    'company': "Prixgen Tech Solutions Pvt. Ltd.",
+    'website': "https://www.prixgen.com",
+    'category': 'Customization',
+    'origin': 'Base',
+    'version': '18.0.0.1',
+    'license': 'LGPL-3',
+    'depends': ['base','account','sale','purchase'],
+    'data': [ ],
+}

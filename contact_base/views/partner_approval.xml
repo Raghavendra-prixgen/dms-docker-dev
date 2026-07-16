@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="res_config_settings_view_conatct_approval_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.contact</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='contacts_settings']" position="inside">
+                <div id="contact_approval">
+                    <block class='contact_approval' name="contact_approval_setting_container">
+                         <setting  id="y_is_contact_approval_required">
+                                    <field name="y_is_contact_approval_required"/>
+                        </setting>
+                            
+                    </block>
+                </div>
+            </xpath>
+        </field>
+    </record>
+    
+    <record id="view_res_partner_approval_master_form" model="ir.ui.view">
+        <field name="name">res.partner.approval.master.form</field>
+        <field name="model">res.partner.approval.master</field>
+        <field name="arch" type="xml">
+            <form string="Partner Approval">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="y_company_id" invisible="1"/>
+                            <field name="y_parent_company_id" invisible="1"/>
+                            <field name="y_name" required="1"/>
+                        </group>
+                        <group>
+                            <field name="y_company_id" options="{'no_create': True, 'no_create_edit':True, 'no_open': True}" required="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Approvals" name="partner_approval" >
+                            <field name="y_res_partner_approval_lines_ids" widget="section_and_note_one2many" >
+                                <list string="Approval Lines" editable="bottom">
+                                    <field name='y_approval_for' required="1"/>
+                                    <field name='y_approval_code_id' options="{'no_create': True, 'no_open': True}" required ="1"/> 
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="search_view_res_partner_approval_master">
+        <field name="name">res.partner.approval.master.search</field>
+        <field name="model">res.partner.approval.master</field>
+        <field name="arch" type="xml">
+            <search>
+              <field name="y_name"/>
+              <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_res_partner_approval_master_form_tree" model="ir.ui.view">
+        <field name="name">res.partner.approval.master.list</field>
+        <field name="model">res.partner.approval.master</field>
+        <field name="priority" eval="1"/>
+        <field name="arch" type="xml">
+            <list string="Partner Approval" >
+                <field name="y_name"/>
+                <field name="y_company_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record model="ir.rule" id="res_partner_approval_master_record_restricted_company_rule">
+        <field name="name">Partner Approval Restricted Record: multi-company</field>
+        <field name="model_id" ref="model_res_partner_approval_master"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">
+            ['|', ('y_company_id', '=', False), ('y_company_id', 'parent_of', company_ids)]
+        </field>
+    </record>
+
+    <record id="action_res_partner_approval_master" model="ir.actions.act_window">
+        <field name="name">Approval Setting Partner</field>
+        <field name="res_model">res.partner.approval.master</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem 
+        id="menu_res_partner_approval_master" 
+        name="Approval Setting Partner" 
+        groups ="contact_base.approve_contacts_required_approval"
+        parent="contacts.res_partner_menu_config"
+        action="action_res_partner_approval_master" sequence="150"
+    />
+
+    <record id="partner_approval_remarks_form" model="ir.ui.view">
+        <field name="name">partner.approval.remarks</field>
+        <field name="model">partner.approval.remarks</field>
+        <field name="arch" type="xml">
+            <form string="Remaks wizard">               
+                <group>
+                    <field name="y_remarks" /> 
+                </group>
+                <footer>
+                    <button name="reject_order"
+                        string="Reject"
+                        type="object"
+                        class="btn-primary"/>
+                    <button string="Discard"
+                        class="btn-secondary"
+                        special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_partner_approval_remarks" model="ir.actions.act_window">
+        <field name="name">Remarks</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">partner.approval.remarks</field>
+        <field name="binding_model_id" eval="False"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="partner_approval_remarks_form"/>
+        <field name="target">new</field>
+    </record>
+
+    <record id="partner_approval_revoke_remarks_form" model="ir.ui.view">
+        <field name="name">partner.approval.revoke.form</field>
+        <field name="model">partner.approval.revoke</field>
+        <field name="arch" type="xml">
+            <form string="Remaks wizard">               
+                <group>
+                    <field name="y_remarks" /> 
+                </group>
+                <footer>
+                    <button name="revoke_order"
+                        string="Revoke"
+                        type="object"
+                        class="btn-primary"/>
+                    <button string="Discard"
+                        class="btn-secondary"
+                        special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_partner_approval_revoke_remarks" model="ir.actions.act_window">
+        <field name="name">Revoke</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">partner.approval.revoke</field>
+        <field name="binding_model_id" eval="False"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="partner_approval_revoke_remarks_form"/>
+        <field name="target">new</field>
+    </record>
+
+    <record id="view_partner_tree_inherit_to_approve_states" model="ir.ui.view">
+        <field name="name">res.partner.view.list.to.approve.states</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <field name="company_id" position="after">
+                <field name="y_to_approve_states" widget="badge" decoration-success="y_to_approve_states == 'cus_ven_approval'" decoration-primary="y_to_approve_states == 'vendor_approval'" decoration-info="y_to_approve_states == 'customer_approval'"/>
+            </field> 
+        </field>
+    </record> 
+
+    <record id="partner_approval_form" model="ir.ui.view">
+        <field name="name">res.partner.approval.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Approvals" invisible="y_is_contact_approval_required == False">
+                    <field name='y_res_partner_approval_ids' widget="section_and_note_one2many" readonly="1">
+                        <list>
+                            <field name='y_approval_for'/>
+                            <field name='y_approval_code_id' widget="badge" decoration-success="1"/>
+                            <button name="view_code_users" type="object" string="" icon="fa-eye" class="btn-secondary" help="View Users" title="View Users"/>
+                            <field name="y_approved_date"/>
+                            <field name="y_approver_id"/>
+                            <field name="y_approval_status" widget="badge" decoration-success="y_approval_status == 'approved'" decoration-primary="y_approval_status == 'approval_pending'" decoration-info="y_approval_status == 'rejected'"/>
+                            <field name="y_is_approval_completed" string="Approval Completed" column_invisible="True"/>
+                            <field name="y_remarks"/>
+                            <button name="button_partner_approve"  type="object" class="oe_highlight" invisible="y_approval_status != 'approval_pending'" string="Approve"/>
+                            <button name="button_partner_reject" type="object" class="oe_highlight" string="Reject" invisible="y_approval_status != 'approval_pending'"/>
+                            <button name="button_revoke" class="btn-secondary" type="object" string="Revoke" invisible="y_approval_status != 'approved'"/>
+                            <field name="y_company_id" optional="hide"/>
+                        </list>
+                    </field>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <record id="view_partner_request_approval_wizard_form" model="ir.ui.view">
+        <field name="name">res.partner.approval.wizard.form</field>
+        <field name="model">res.partner.approval.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="y_partner_id" invisible="1" />
+                            <field name="y_is_customer" readonly="y_is_both"/>
+                            <field name="y_is_vendor" readonly="y_is_both"/>
+                        </group>
+                        <group>
+                            <field name="y_is_both"/>
+                            <field name="y_company_id" required="1" options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <group>
+                        <button class="btn btn-primary" type="object" name="action_get_approval" string="Confirm"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </group>
+                </footer>
+            </form>
+
+        </field>
+    </record>
+
+    <record id="action_partner_request_for_approval" model="ir.actions.server">
+        <field name="name">Request For Approval</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="groups_id" eval="[(4, ref('contact_base.approve_contacts_required_approval'))]"/>
+        <field name="binding_model_id" ref="model_res_partner"/>
+        <field name="binding_view_types">form</field>
+        <field name="state">code</field>
+        <field name="code">
+            if records:
+                action = records.button_partner_request_approval()
+        </field>
+    </record>
+
+</odoo>

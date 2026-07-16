@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_sale_register_report_list"  model="ir.ui.view" >
+        <field name="name">sales.register.report.list</field>
+        <field name="model">sales.register.report</field>
+        <field name="arch" type="xml">
+            <list create="false" export_xlsx="0">
+                <field name="y_move_name" />
+                <field name="y_move_id" force_save="1" column_invisible="True"/>
+                <field name="y_move_line_id" force_save="1" column_invisible="True"/>
+                <field name="y_invoice_date"/>
+                <field name="y_analytic_account_ids" widget="many2many_tags" optional="hide"/>
+                <field name="y_partner_id" optional="show"/>
+                <field name="y_partner_category_id" optional="hide"/>
+                <field name="y_company_id" optional="show"/>
+                <field name="y_partner_ref" optional="hide"/>
+                <field name="y_invoice_amount_fc" optional="hide"/>
+                <field name="y_sales_person_id" optional="show"/>
+                <field name="y_sales_team_id" optional="hide"/>
+                <field name="y_partner_state_id" optional="hide"/>
+                <field name="y_partner_city" optional="hide"/>
+                <field name="y_gst_name" optional="show"/>
+                <field name="y_partner_country_id" optional="hide"/>
+                <field name="y_customer_invoice_ref" optional="hide"/>
+                <field name="y_product_id" optional="show"/>
+                <field name="y_label" optional="hide"/>
+                <field name="y_product_category_id" optional="show"/>
+                <field name="y_product_type" optional="hide"/>
+                <field name="y_uom_id" optional="show"/>
+                <field name="y_payment_state" optional="hide"/>
+                <field name="y_product_ref" optional="show"/>
+                <field name="y_account_id" optional="show"/>
+                <field name="y_journal_id" optional="show"/>
+                <field name="y_currency_id" optional="show"/>
+                <field name="y_sale_order_id" optional="show"/>
+                <field name="y_sale_order_date" optional="show"/>
+                <field name="y_quantity" string="Quantity" optional="show"/>
+                <field name="y_price_unit" string="Price" optional="show"/>
+                <field name="y_weight" optional="show"/>
+                <field name="y_total_weight" optional="show"/>
+                <field name="y_amount_exclusive_tax" optional="show"/>
+                <field name="y_tax" optional="hide"/>
+                <field name="y_tax_amount" optional="show"/>
+                <field name="y_amount_inclusive_tax" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_sale_register_report_search" model="ir.ui.view">
+        <field name="name">sales.register.report.search</field>
+        <field name="model">sales.register.report</field>
+        <field name="arch" type="xml">
+            <search string="Search Sales Order Report">
+                <field name="y_move_id"/>
+                <field name="y_journal_id"/>
+                <field name="y_account_id"/>
+                <field name="y_product_id"/>
+                <field name="y_partner_id"/>
+                <separator/>
+                <group expand="1" string="Group By">
+                    <filter string="Journal Name" name="journal name" context="{'group_by':'y_journal_id'}"/>
+                    <filter string="Account Name" name="account name" context="{'group_by':'y_account_id'}"/>
+                    <filter string="Product Category" name="product category" context="{'group_by':'y_product_category_id'}"/>
+                    <filter string="Product" name="product" context="{'group_by':'y_product_id'}"/>
+                    <filter string="Invoice Type" name="y_move_type_name" context="{'group_by':'y_move_type_name'}"/>
+                </group>                        
+            </search>
+        </field>               
+    </record>
+
+    <record id="view_sale_report_wizard" model="ir.ui.view">
+        <field name="name">sale.register.wizard</field>
+        <field name="model">sale.register.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form create="false" edit="false">
+                <group>                   
+                    <group>
+                        <field name="y_start_date" string="Start Date" required='1'/>
+                        <field name="y_choose_from" widget='radio' string="Choose From"/>
+                    </group>
+                    <group>
+                        <field name="y_end_date" string="End Date" required='1'/>
+                        <field name="y_partner_id" invisible="y_choose_from != 'partner_id'" required="y_choose_from == 'partner_id'" widget="many2many_tags" options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"/>
+                        <field name="y_sale_person_id"  invisible="y_choose_from != 'sale_person'" required="y_choose_from == 'sale_person'"  widget="many2many_tags" options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"/>
+                        <field name="y_company_id" string="Company" required="1"/>
+                    </group>
+                </group>            
+                <footer>
+                    <button class="btn btn-primary" type="object" name="retrieve_register" string="View Report"/>
+                    <button string="Generate Xlsx Report" type="object" name="button_download_xlsx_report" class="oe_highlight"/>
+                    <button string="Cancel" class="btn-default" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+
+    <record id="action_sale_report_wizard" model="ir.actions.act_window">
+        <field name="name">Sales Register Report</field>
+        <field name="res_model">sale.register.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_sale_report_wizard"/>
+    </record> 
+
+     <menuitem id="menu_sale_register_report"
+        name="Sales Register Report"
+        action="action_sale_report_wizard"
+        parent="sale.menu_sale_report"
+        sequence="2"/>
+</odoo>

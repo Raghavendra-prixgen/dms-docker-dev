@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_duplicate_sale_order,duplicate.sale.order,model_duplicate_sale_order,,1,1,1,1
+access_duplicate_sale_order_line,duplicate.sale.order.line,model_duplicate_sale_order_line,,1,1,1,1
+access_publish_distributor_wizard,publish.distributor.wizard,model_publish_distributor_wizard,,1,1,1,1
+
+access_draft_partner,draft.partner,model_draft_partner,,1,1,1,1
+
+
+access_tally_push_wizard,access_tally_push_wizard,model_tally_push_wizard,base.group_user,1,1,1,1
+access_tally_result_wizard,access_tally_result_wizard,model_tally_result_wizard,base.group_user,1,1,1,1
+access_tally_push_date_wizard,access_tally_push_date_wizard,model_tally_push_date_wizard,base.group_user,1,1,1,1
+access_tally_sync_log,tally.sync.log,model_tally_sync_log,,1,1,1,1
+
+
+
+

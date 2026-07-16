@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Product Template -->
+        <record id="product_template_only_form_view_inherit_product_groups" model="ir.ui.view">
+            <field name="name">product_template_only_form_view_inherit_product_groups</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <field name="type" position="after">
+                    <field name="y_item_group" options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"/>
+                    <field name="y_product_group_1" options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"/>
+                </field>
+            </field>
+        </record>
+
+<!--         < product variant/>
+ -->
+        <record id="product_product_only_form_view_inherit_product_groups" model="ir.ui.view">
+            <field name="name">product_variant_only_form_view_inherit_product_groups</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <field name="categ_id" position="after">
+                    <field name="y_item_group" options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"/>
+                    <field name="y_product_group_1" options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="search_view_item_group_delete_button" model="ir.ui.view">
+            <field name="name">item.group.search.delete.button</field>
+            <field name="model">item.group</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="y_name"/>
+                    <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                </search>                
+            </field>
+        </record>
+
+        <record id="search_view_product_group_1_delete_button" model="ir.ui.view">
+            <field name="name">product.group.1.search.delete.button</field>
+            <field name="model">product.group.1</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="y_name"/>
+                    <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                </search>                
+            </field>
+        </record>
+        
+        
+        <!-- Group Master lists -->
+        <record id="item_group_list_view" model="ir.ui.view">
+            <field name="name">item_group_list_view</field>
+            <field name="model">item.group</field>
+            <field name="arch" type="xml">
+                <list editable="bottom">
+                    <field name="y_code" required="1"/>
+                    <field name="y_name" string="Description" required="1"/>
+                    <field name="y_company_id" options="{'no_create': True, 'no_create_edit':True, 'no_open': True}" groups="base.group_multi_company"/>
+                </list>
+            </field>
+        </record>
+        <record id="product_group_1_list_view" model="ir.ui.view">
+            <field name="name">product_group_1_list_view</field>
+            <field name="model">product.group.1</field>
+            <field name="arch" type="xml">
+                <list editable="bottom">
+                    <field name="y_code" required="1"/>
+                    <field name="y_name" string="Description" required="1"/>
+                    <field name="y_product_category_id" required="1" options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"/>
+                    <field name="y_company_id" options="{'no_create': True, 'no_create_edit':True, 'no_open': True}" groups="base.group_multi_company"/>
+                </list>
+            </field>
+        </record>
+        
+        <!-- Groups Multi Company -->
+        <record model="ir.rule" id="item_group_record_restricted_company_rule">
+            <field name="name">Item Group Restricted Record: multi-company</field>
+            <field name="model_id" ref="model_item_group"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">
+                ['|', ('y_company_id', '=', False), ('y_company_id', 'in', company_ids)]
+            </field>
+        </record>
+
+        <record model="ir.rule" id="product_group_1_record_restricted_company_rule">
+            <field name="name">Product Group 1 Restricted Record: multi-company</field>
+            <field name="model_id" ref="model_product_group_1"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">
+                ['|', ('y_company_id', '=', False), ('y_company_id', 'in', company_ids)]
+            </field>
+        </record>
+
+        
+        <!-- Group Master Actions -->
+        <record id="item_group_action" model="ir.actions.act_window">
+            <field name="name">Item Group</field>
+            <field name="res_model">item.group</field>
+            <field name="view_mode">list</field>
+        </record>
+        <record id="product_group_1_action" model="ir.actions.act_window">
+            <field name="name">Product Group 1</field>
+            <field name="res_model">product.group.1</field>
+            <field name="view_mode">list</field>
+        </record>
+
+        <!-- Group Master Menus -->
+        <menuitem id="menu_product_group_root"
+                    name="Product Groups"
+                    parent="stock.menu_stock_config_settings"
+                    sequence="5"/>
+                
+
+        <menuitem id="menu_item_group"
+                    name="Item Group"
+                    action="item_group_action"
+                    parent="menu_product_group_root"
+                    sequence="5"
+                    />
+
+        <menuitem id="menu_product_group_1"
+                    name="Product Group 1"
+                    action="product_group_1_action"
+                    parent="menu_product_group_root"
+                    sequence="10"
+                    />
+        
+    </data>
+</odoo>

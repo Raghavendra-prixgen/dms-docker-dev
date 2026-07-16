@@ -1,0 +1,54 @@
+<!-- views/tally_push_date_wizard_views.xml -->
+
+<odoo>
+    <record id="view_tally_push_date_wizard_form" model="ir.ui.view">
+        <field name="name">tally.push.date.wizard.form</field>
+        <field name="model">tally.push.date.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Push Products to Tally by Date">
+                <group>
+                    <group>
+                        <field name="push_type" widget="radio"/>
+                        <field name="date_from" invisible="push_type not in ['by_date']"/>
+                        <field name="date_to" invisible="push_type not in ['by_date']"/>
+                    </group>
+                    <group>
+                        <label for="product_count"/>
+                        <div>
+                            <field name="product_count" class="oe_inline"/> products found
+                        </div>
+                        <field name="push_mode" widget="radio"/>
+                        <field name="company_ids" invisible="push_mode != 'selected'"
+                               widget="many2many_tags"/>
+                    </group>
+                </group>
+                
+                <group>
+                    <field name="update_existing"/>
+                </group>
+                
+                <footer>
+                    <button name="action_push_to_tally" 
+                            string="Push to Tally" 
+                            type="object" 
+                            class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Menu Action -->
+    <record id="action_push_products_by_date" model="ir.actions.act_window">
+        <field name="name">Push Products to Tally by Date</field>
+        <field name="res_model">tally.push.date.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    
+    <menuitem id="menu_push_products_by_date"
+              name="Push to Tally (By Date)"
+              parent="sale.prod_config_main"
+              action="action_push_products_by_date"
+              sequence="100"/>
+</odoo>

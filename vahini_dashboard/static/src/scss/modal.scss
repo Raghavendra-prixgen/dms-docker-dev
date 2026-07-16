@@ -1,0 +1,224 @@
+
+.vd-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.vd-cmp-modal {
+    background: var(--card);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    min-height: 90vh;
+    width: 125vh;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+}
+
+.vd-cmp-hdr {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    border-radius: 16px 16px 0 0;
+    background: var(--card);
+}
+
+.vd-cmp-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--blue);
+    margin-right: 4px;
+}
+
+.vd-cmp-select {
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    font-size: 12px;
+    background: var(--bg);
+    color: var(--text1);
+    outline: none;
+}
+
+.vd-cmp-type-btns {
+    display: flex;
+    gap: 2px;
+    margin-left: auto;
+}
+
+.vd-cmp-close {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text2);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: 6px;
+    &:hover { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
+}
+
+.vd-cmp-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 60px 20px;
+    color: var(--text2);
+    font-size: 13px;
+}
+
+.vd-cmp-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    overflow: visible;
+    flex: 1;
+    min-height: 0;
+}
+
+.vd-cmp-panel {
+    background: var(--card);
+    display: flex;
+    flex-direction: column;
+    padding: 14px;
+    gap: 10px;
+    position: relative;
+    overflow: visible;
+    min-height: 380px;
+}
+
+.vd-cmp-label-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text2);
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all .15s;
+    text-align: left;
+
+    &:hover {
+        border-color: var(--blue);
+        color: var(--blue);
+        background: color-mix(in srgb, var(--blue) 8%, var(--card));
+    }
+}
+
+.vd-cmp-edit-hint {
+    margin-left: auto;
+    font-size: 9px;
+    opacity: .5;
+}
+
+.vd-cmp-picker-overlay {
+    position: absolute;
+    top: 52px;
+    left: 14px;
+    right: 14px;
+    z-index: 500;
+}
+
+.vd-cmp-picker {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,.2);
+    padding: 14px;
+}
+
+.vd-cmp-picker-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: 10px;
+}
+
+// ── Quick preset buttons ──────────────────────────────────────
+.vd-cmp-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.vd-preset-btn {
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text2);
+    font-size: 11px;
+    cursor: pointer;
+    transition: all .12s;
+    white-space: nowrap;
+
+    &:hover {
+        border-color: var(--blue);
+        color: var(--blue);
+    }
+
+    &.active {
+        background: var(--blue);
+        color: #fff;
+        border-color: var(--blue);
+        font-weight: 600;
+    }
+}
+
+// ── Custom range inputs inside picker ─────────────────────────
+.vd-cmp-picker-inputs {
+    // reuse .vd-dp-row / .vd-dp-label / .vd-dp-input from loading.scss
+}
+
+// ── Chart area ────────────────────────────────────────────────
+.vd-cmp-chart {
+    flex: 1;
+    min-height: 260px;
+    position: relative;
+
+    canvas {
+        position: absolute;
+        inset: 0;
+        width: 100% !important;
+        height: 100% !important;
+    }
+}
+
+// ── Pagination ────────────────────────────────────────────────
+.vd-cmp-pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 18px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--card);
+    border-radius: 0 0 16px 16px;
+}

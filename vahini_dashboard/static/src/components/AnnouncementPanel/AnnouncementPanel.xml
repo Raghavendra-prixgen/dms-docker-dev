@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="vahini_dashboard.AnnouncementPanel">
+<div class="vd-ann-panel">
+
+    <!-- Header -->
+    <div class="vd-ann-header">
+        <div class="vd-ann-header-left">
+            <span class="vd-ann-icon">📋</span>
+            <span class="vd-ann-title">Announcements</span>
+            <span class="vd-ann-count"><t t-esc="state.announcements.length"/></span>
+        </div>
+        <t t-if="state.isManager">
+            <button class="vd-ann-new-btn" t-on-click="openCreate">+ New</button>
+        </t>
+    </div>
+
+    <!-- Loading -->
+    <t t-if="state.loading">
+        <div class="vd-ann-loading"><div class="vd-spinner"/></div>
+    </t>
+
+    <!-- Empty -->
+    <t t-if="!state.loading and !state.announcements.length">
+        <div class="vd-ann-empty">
+            <span style="font-size:40px">📭</span>
+            <p>No announcements yet</p>
+            <t t-if="state.isManager">
+                <button class="vd-ann-new-btn" t-on-click="openCreate">Create First</button>
+            </t>
+        </div>
+    </t>
+
+    <!-- Cards -->
+    <t t-if="!state.loading and state.announcements.length">
+        <div class="vd-ann-list">
+            <t t-foreach="state.announcements" t-as="ann" t-key="ann.id">
+                <div class="vd-ann-card" t-att-style="'border-left: 4px solid ' + typeConf(ann.ann_type).color">
+
+                    <!-- Card header -->
+                    <div class="vd-ann-card-hdr">
+                        <span class="vd-ann-badge"
+                              t-att-style="'background:'+typeConf(ann.ann_type).bg+';color:'+typeConf(ann.ann_type).color">
+                            <t t-esc="typeConf(ann.ann_type).icon"/>
+                            <t t-esc="typeConf(ann.ann_type).label"/>
+                        </span>
+                        <t t-if="ann.pin_top">
+                            <span class="vd-ann-pin">📌 Pinned</span>
+                        </t>
+                        <div class="vd-ann-card-actions">
+                            <t t-if="state.isManager">
+                                <button class="vd-ann-edit" t-on-click="()=>this.openEdit(ann)" title="Edit">✏️</button>
+                                <button class="vd-ann-del" t-on-click="()=>this.confirmDelete(ann.id)" title="Delete">🗑️</button>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Image -->
+                    <t t-if="ann.image">
+                        <img class="vd-ann-img" t-att-src="ann.image" alt=""/>
+                    </t>
+
+                    <!-- Content -->
+                    <div class="vd-ann-card-body">
+                        <h3 class="vd-ann-card-title"><t t-esc="ann.title"/></h3>
+                        <p class="vd-ann-card-msg"><t t-esc="ann.message"/></p>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="vd-ann-card-footer">
+                        <span class="vd-ann-meta">By <b><t t-esc="ann.created_by"/></b> · <t t-esc="ann.created_on"/></span>
+                        <div style="display:flex;gap:8px;align-items:center">
+                            <t t-if="ann.expiry_date">
+                                <span class="vd-ann-expiry">⏰ Expires: <t t-esc="ann.expiry_date"/></span>
+                            </t>
+                            <t t-if="ann.link">
+                                <a class="vd-ann-link" t-att-href="ann.link" target="_blank">🔗 View Details</a>
+                            </t>
+                        </div>
+                    </div>
+
+                </div>
+            </t>
+        </div>
+    </t>
+
+    <!-- Delete confirm modal -->
+    <t t-if="state.deleteId">
+        <div class="vd-ann-overlay" t-on-click="cancelDelete">
+            <div class="vd-ann-confirm" t-on-click.stop="">
+                <h3>Delete Announcement?</h3>
+                <p>This cannot be undone.</p>
+                <div class="vd-ann-confirm-btns">
+                    <button class="vd-ann-cancel-btn" t-on-click="cancelDelete">Cancel</button>
+                    <button class="vd-ann-del-btn" t-on-click="doDelete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- Create / Edit Form Modal -->
+    <t t-if="state.showForm">
+        <div class="vd-ann-overlay" t-on-click="closeForm">
+            <div class="vd-ann-form-modal" t-on-click.stop="">
+
+                <div class="vd-ann-form-hdr">
+                    <h2><t t-if="state.form.id">Edit</t><t t-else="">New</t> Announcement</h2>
+                    <button class="vd-ann-close" t-on-click="closeForm">✕</button>
+                </div>
+
+                <div class="vd-ann-form-body">
+                    <!-- Type -->
+                    <div class="vd-ann-field">
+                        <label>Type</label>
+                        <div class="vd-ann-type-btns">
+                            <t t-foreach="typeOptions" t-as="opt" t-key="opt.value">
+                                <button t-att-class="'vd-type-btn'+(state.form.ann_type===opt.value?' active':'')"
+                                        t-on-click="()=>this.state.form.ann_type=opt.value">
+                                    <t t-esc="opt.icon"/> <t t-esc="opt.label"/>
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Title -->
+                    <div class="vd-ann-field">
+                        <label>Title <span style="color:red">*</span></label>
+                        <input class="vd-ann-input" placeholder="Announcement title"
+                               t-att-value="state.form.title"
+                               t-on-input="(ev)=>this.onField('title',ev)"/>
+                    </div>
+
+                    <!-- Message -->
+                    <div class="vd-ann-field">
+                        <label>Message <span style="color:red">*</span></label>
+                        <textarea class="vd-ann-textarea" rows="4" placeholder="Describe the announcement..."
+                                  t-on-input="(ev)=>this.onField('message',ev)"><t t-esc="state.form.message"/></textarea>
+                    </div>
+
+                    <!-- Link + Expiry -->
+                    <div class="vd-ann-field-row">
+                        <div class="vd-ann-field">
+                            <label>URL / Link</label>
+                            <input class="vd-ann-input" placeholder="https://..."
+                                   t-att-value="state.form.link"
+                                   t-on-input="(ev)=>this.onField('link',ev)"/>
+                        </div>
+                        <div class="vd-ann-field">
+                            <label>Expiry Date</label>
+                            <input class="vd-ann-input" type="date"
+                                   t-att-value="state.form.expiry_date"
+                                   t-on-input="(ev)=>this.onField('expiry_date',ev)"/>
+                        </div>
+                    </div>
+
+                    <!-- Pin -->
+                    <div class="vd-ann-field vd-ann-field-check">
+                        <input type="checkbox" id="pin_top"
+                               t-att-checked="state.form.pin_top ? 'checked' : undefined"
+                               t-on-change="(ev)=>this.onField('pin_top',ev)"/>
+                        <label for="pin_top">📌 Pin to top</label>
+                    </div>
+                </div>
+
+                <div class="vd-ann-form-footer">
+                    <button class="vd-ann-cancel-btn" t-on-click="closeForm">Cancel</button>
+                    <button class="vd-ann-save-btn" t-att-disabled="state.saving?'true':undefined"
+                            t-on-click="save">
+                        <t t-if="state.saving">Saving...</t>
+                        <t t-else="">Save Announcement</t>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </t>
+
+</div>
+</t>
+</templates>

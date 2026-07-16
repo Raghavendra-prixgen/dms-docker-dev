@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <!-- <record id="view_partner_form_view_inherit_custom_fields" model="ir.ui.view">
+            <field name="name">view.partner.form.view.inherit.custom.fileds</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="category_id" position="after">
+                    <field name="district_id" options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"/>
+                    <field name="taluk_id" options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"/>
+                </field>
+            </field>
+        </record> -->
+
+        <record id="invoice_form_inherit_delivery_address" model="ir.ui.view">
+            <field name="name">account.move.delivery.address</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <div name="journal_div" position="after">
+                    <field name="delivery_address"/>
+                </div>
+            </field>
+        </record>
+        
+       <record id="partner_state_list_view" model="ir.ui.view">
+            <field name="name">list view of res country state</field>
+            <field name="model">res.country.state</field>
+            <field name="inherit_id" ref="base.view_country_state_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list/field[@name='name']" position="after">
+                    <field name="state_primary_key"/>
+                </xpath>
+            </field>
+        </record>
+
+
+
+        <!-- Partner District lists -->
+        <record id="partner_district_list_view" model="ir.ui.view">
+            <field name="name">partner_district_list_view</field>
+            <field name="model">partner.district</field>
+            <field name="arch" type="xml">
+                <list editable="bottom">
+                    <field name="name" required="1"/>
+                    <field name="dist_primary_key"/>
+                    <field name="y_state_id"/>
+                    <field name="state_primary_key_id" invisible="1"/>
+                </list>
+            </field>
+        </record>
+        
+        <record id="partner_taluk_list_view" model="ir.ui.view">
+            <field name="name">partner_taluk_list_view</field>
+            <field name="model">partner.taluk</field>
+            <field name="arch" type="xml">
+                <list editable="bottom">
+                    <field name="name" required="1"/>
+                    <field name="taluk_primary_key"/>
+                    <field name="district_id"/>
+                    <field name="y_state_id"/>
+                    <field name="district_primary_key" invisible="1"/>
+                    <field name="state_primary_key" invisible="1"/>
+      
+                </list>
+            </field>
+        </record>
+            
+        <!-- Group Master Actions -->
+        
+        <record id="partner_district_action" model="ir.actions.act_window">
+            <field name="name">Partner District</field>
+            <field name="res_model">partner.district</field>
+            <field name="view_mode">list</field>
+        </record>
+        <record id="partner_taluk_action" model="ir.actions.act_window">
+            <field name="name">Partner Taluk</field>
+            <field name="res_model">partner.taluk</field>
+            <field name="view_mode">list</field>
+        </record>
+
+       
+        <menuitem id="menu_partner_district"
+                    name="Partner District"
+                    action="partner_district_action"
+                    parent="account.menu_finance_receivables"
+                    sequence="115"
+                    />
+
+        <menuitem id="menu_partner_taluk"
+                    name="Partner Taluk"
+                    action="partner_taluk_action"
+                    parent="account.menu_finance_receivables"
+                    sequence="116"
+                    />
+        
+    </data>
+</odoo>

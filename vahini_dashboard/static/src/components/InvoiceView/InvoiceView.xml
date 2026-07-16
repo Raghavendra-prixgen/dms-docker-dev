@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="vahini_dashboard.InvoiceView">
+    <div class="vd-invoice-view" t-ref="mount"/>
+</t>
+</templates>

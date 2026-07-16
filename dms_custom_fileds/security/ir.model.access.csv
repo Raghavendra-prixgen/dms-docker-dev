@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_item_group,access_item_group,model_item_group,base.group_user,1,1,1,0
+access_product_group_1,access_product_group_1,model_product_group_1,base.group_user,1,1,1,0
+access_partner_district,access_partner_district,model_partner_district,base.group_user,1,1,1,0
+access_partner_taluk,access_partner_taluk,model_partner_taluk,base.group_user,1,1,1,0
+

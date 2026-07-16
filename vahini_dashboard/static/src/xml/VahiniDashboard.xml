@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="vahini_dashboard.VahiniDashboard">
+    <div class="vd-root">
+
+        <SideDrawer activeView="state.activeView" onNavClick="(v) => this.onNavClick(v)"/>
+
+        <div class="vd-main">
+
+            <t t-if="state.activeView === 'dayview'">
+                <SnapHeader
+                    title="'Day View'"
+                    theme="state.theme"
+                    dateFrom="state.dateFrom"
+                    dateTo="state.dateTo"
+                    dateDisplay="displayDateRange"
+                    onThemeToggle="() => this.toggleTheme()"
+                    onDateChange="(df, dt) => this.onDateChange(df, dt)"
+                    onRefresh="() => this.onRefresh()"
+                />
+                <DayView
+                    dateFrom="state.dateFrom"
+                    dateTo="state.dateTo"
+                    defaultTab="'sales'"
+                    onBack="() => this.onNavClick('dashboard')"
+                />
+            </t>
+
+            <t t-elif="state.activeView === 'purchaseview'">
+                <SnapHeader
+                    title="'Purchase View'"
+                    theme="state.theme"
+                    dateFrom="state.dateFrom"
+                    dateTo="state.dateTo"
+                    dateDisplay="displayDateRange"
+                    onThemeToggle="() => this.toggleTheme()"
+                    onDateChange="(df, dt) => this.onDateChange(df, dt)"
+                    onRefresh="() => this.onRefresh()"
+                />
+                <PurchaseView
+                    dateFrom="state.dateFrom"
+                    dateTo="state.dateTo"
+                    onBack="() => this.onNavClick('dashboard')"
+                />
+            </t>
+            <t t-elif="state.activeView === 'mapview'">
+                <SnapHeader
+                    title="'Map View'"
+                    theme="state.theme"
+                    dateFrom="state.dateFrom"
+                    dateTo="state.dateTo"
+                    dateDisplay="displayDateRange"
+                    onThemeToggle="() => this.toggleTheme()"
+                    onDateChange="(df, dt) => this.onDateChange(df, dt)"
+                    onRefresh="() => this.onRefresh()"
+                />
+                <MapView
+                    dateFrom="state.dateFrom"
+                    dateTo="state.dateTo"
+                />
+            </t>
+
+            <t t-elif="state.activeView === 'trendview'">
+                <SnapHeader
+                    title="'Trend View'"
+                    theme="state.theme"
+                    dateFrom="state.dateFrom"
+                    dateTo="state.dateTo"
+                    dateDisplay="displayDateRange"
+                    onThemeToggle="() => this.toggleTheme()"
+                    onDateChange="(df, dt) => this.onDateChange(df, dt)"
+                    onRefresh="() => this.onRefresh()"
+                />
+                <TrendView
+                    dateFrom="state.dateFrom"
+                    dateTo="state.dateTo"
+                />
+            </t>
+
+            <t t-elif="state.activeView === 'itemmaster'">
+                <ItemMaster/>
+            </t>
+
+            <t t-elif="state.activeView === 'invoices'">
+                <InvoiceView/>
+            </t>
+
+            <t t-elif="state.activeView === 'announcements'">
+                <AnnouncementPanel/>
+            </t>
+
+            <t t-elif="state.activeView === 'gpview'">
+                <SnapHeader
+                    title="'GP View'"
+                    theme="state.theme"
+                    dateFrom="state.dateFrom"
+                    dateTo="state.dateTo"
+                    dateDisplay="displayDateRange"
+                    onThemeToggle="() => this.toggleTheme()"
+                    onDateChange="(df, dt) => this.onDateChange(df, dt)"
+                    onRefresh="() => this.onRefresh()"
+                />
+                <GpView
+                    dateFrom="state.dateFrom"
+                    dateTo="state.dateTo"
+                />
+            </t>
+
+            <t t-elif="state.activeView === 'itemview'">
+                <SnapHeader
+                    title="'Item View'"
+                    theme="state.theme"
+                    dateFrom="state.dateFrom"
+                    dateTo="state.dateTo"
+                    dateDisplay="displayDateRange"
+                    onThemeToggle="() => this.toggleTheme()"
+                    onDateChange="(df, dt) => this.onDateChange(df, dt)"
+                    onRefresh="() => this.onRefresh()"
+                />
+                <ItemView
+                    dateFrom="state.dateFrom"
+                    dateTo="state.dateTo"
+                />
+            </t>
+
+            <t t-elif="state.activeView === 'followup'">
+                <SnapHeader
+                    title="'Follow-Up'"
+                    theme="state.theme"
+                    dateFrom="state.dateFrom"
+                    dateTo="state.dateTo"
+                    dateDisplay="displayDateRange"
+                    onThemeToggle="() => this.toggleTheme()"
+                    onDateChange="(df, dt) => this.onDateChange(df, dt)"
+                    onRefresh="() => this.onRefresh()"
+                />
+                <FollowUpView
+                    dateFrom="state.dateFrom"
+                    dateTo="state.dateTo"
+                />
+            </t>
+
+            <t t-elif="state.activeView === 'payment'">
+                <SnapHeader
+                    title="'Payment View'"
+                    theme="state.theme"
+                    dateFrom="state.dateFrom"
+                    dateTo="state.dateTo"
+                    dateDisplay="displayDateRange"
+                    onThemeToggle="() => this.toggleTheme()"
+                    onDateChange="(df, dt) => this.onDateChange(df, dt)"
+                    onRefresh="() => this.onRefresh()"
+                />
+                <PaymentView
+                    dateFrom="state.dateFrom"
+                    dateTo="state.dateTo"
+                />
+            </t>
+
+            <t t-else="">
+                <SnapHeader
+                    theme="state.theme"
+                    dateFrom="state.dateFrom"
+                    dateTo="state.dateTo"
+                    dateDisplay="displayDateRange"
+                    onThemeToggle="() => this.toggleTheme()"
+                    onDateChange="(df, dt) => this.onDateChange(df, dt)"
+                    onRefresh="() => this.onRefresh()"
+                />
+
+                <t t-if="state.loading">
+                    <div class="vd-loading">
+                        <div class="vd-spinner"/>
+                        <span>Loading invoice data…</span>
+                    </div>
+                </t>
+
+                <t t-elif="state.error">
+                    <div class="vd-error">
+                        <span>&#9888; Error: <t t-esc="state.error"/></span>
+                        <button t-on-click="() => this.onRefresh()">Retry</button>
+                    </div>
+                </t>
+
+                <t t-else="">
+                    <SnapMetrics metrics="state.metrics"/>
+
+                    <div class="vd-charts-grid">
+                        <t t-foreach="state.chartDefs" t-as="def" t-key="def.id">
+                            <ChartCard
+                                def="def"
+                                theme="state.theme"
+                                dateFrom="state.dateFrom"
+                                dateTo="state.dateTo"
+                                onCompare="(d, data, type) => this.openCompare(d, data, type)"
+                            />
+                        </t>
+                    </div>
+
+                    <div class="vd-tables-grid">
+                        <DataTable dateFrom="state.dateFrom" dateTo="state.dateTo" initGroup="'item_name'"    title="'Item Name'"/>
+                        <DataTable dateFrom="state.dateFrom" dateTo="state.dateTo" initGroup="'customer_name'" title="'Customer Name'"/>
+                        <DataTable dateFrom="state.dateFrom" dateTo="state.dateTo" initGroup="'customer_type'" title="'Customer Type'"/>
+                    </div>
+                </t>
+            </t>
+
+        </div>
+
+        <t t-if="state.compareOpen">
+            <CompareModal
+                def="state.compareDef"
+                pageData="state.compareData"
+                type="state.compareType"
+                dateFrom="state.dateFrom"
+                dateTo="state.dateTo"
+                onClose="() => this.closeCompare()"
+            />
+        </t>
+
+    <!-- Announcement Popup on load -->
+    <t t-if="state.showAnnPopup and state.announcements.length">
+        <div class="vd-ann-popup-overlay" t-on-click="dismissAnnPopup">
+            <div class="vd-ann-popup" t-on-click.stop="">
+                <div class="vd-ann-popup-hdr">
+                    <h2>📋 Latest Announcements</h2>
+                    <button class="vd-ann-close" t-on-click="dismissAnnPopup">✕</button>
+                </div>
+                <div class="vd-ann-popup-body">
+                    <t t-foreach="state.announcements" t-as="ann" t-key="ann.id">
+                        <div class="vd-ann-popup-card"
+                             t-att-style="'border-left-color:'+typeConf(ann.ann_type).color">
+                            <span class="vd-ann-badge"
+                                  t-att-style="'background:'+typeConf(ann.ann_type).bg+';color:'+typeConf(ann.ann_type).color">
+                                <t t-esc="typeConf(ann.ann_type).icon"/>
+                                <t t-esc="typeConf(ann.ann_type).label"/>
+                            </span>
+                            <div class="vd-ann-card-title" style="font-size:14px;margin-top:8px"><t t-esc="ann.title"/></div>
+                            <div class="vd-ann-card-msg" style="font-size:12px;margin-top:4px"><t t-esc="ann.message"/></div>
+                            <t t-if="ann.link">
+                                <a class="vd-ann-link" t-att-href="ann.link" target="_blank"
+                                   style="display:inline-block;margin-top:6px">🔗 View Details</a>
+                            </t>
+                        </div>
+                    </t>
+                </div>
+                <button class="vd-ann-popup-dismiss" t-on-click="dismissAnnPopup">Got it! ✓</button>
+            </div>
+        </div>
+    </t>
+
+    </div>
+</t>
+
+</templates>

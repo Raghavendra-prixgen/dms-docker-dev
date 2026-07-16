@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- <record id="contact_base.approve_contacts_customer" model="res.groups">
+        <field name="name">Approve Customer</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+    </record>
+    <record id="contact_base.approve_contacts_vendor" model="res.groups">
+        <field name="name">Approve Vendor</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+    </record>
+ -->
+    <record id="approve_contacts_revoke_approval" model="res.groups">
+        <field name="name">Partner Revoke Approval</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+    </record>
+
+
+    <record id="approve_contacts_required_approval" model="res.groups">
+        <field name="name">Is Contact Approval Required</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+    </record>
+</odoo>

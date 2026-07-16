@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="vahini_dashboard.ItemMaster">
+<div class="imv-root">
+
+    <!-- ── Page Header ──────────────────────────────────────── -->
+    <div class="imv-page-header">
+        <span class="imv-addons-title">Add Ons</span>
+    </div>
+
+    <!-- ── Section Header ───────────────────────────────────── -->
+    <div class="imv-section-header">
+        <span class="imv-master-title">Master</span>
+        <div class="imv-section-btns">
+            <button class="imv-sync-btn">Sync Data</button>
+            <button class="imv-active-btn">Item Master</button>
+            <button class="imv-plain-btn">Customer Master</button>
+        </div>
+    </div>
+
+    <!-- ── Warning banner ───────────────────────────────────── -->
+    <div class="imv-banner">
+        The columns marked ( * ) will not be updated
+    </div>
+
+    <!-- ── Table toolbar ────────────────────────────────────── -->
+    <div class="imv-toolbar">
+        <div class="imv-tbl-label">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Item Master
+            <span class="imv-total-badge"><t t-esc="state.total"/></span>
+        </div>
+        <div class="imv-toolbar-right">
+            <div class="imv-global-wrap">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input class="imv-global-input" placeholder="Press Space for Global Search"/>
+            </div>
+            <div class="imv-search-wrap">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input class="imv-search-input" placeholder="Search" t-on-input="onSearch"/>
+            </div>
+            <button class="imv-tbar-btn" title="Download">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </button>
+            <button class="imv-tbar-btn" title="User">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- ── Table ─────────────────────────────────────────────── -->
+    <div class="imv-table-wrap">
+        <t t-if="state.loading">
+            <div class="imv-loading"><div class="vd-spinner"/><span>Loading&#8230;</span></div>
+        </t>
+        <t t-if="!state.loading">
+            <table class="imv-table">
+                <thead>
+                    <tr>
+                        <th class="imv-th-sticky">Item Name</th>
+                        <th class="imv-th">Category <span class="imv-star">*</span> <span class="imv-sort">⇅</span></th>
+                        <th class="imv-th">Conversion <span class="imv-star">*</span> <span class="imv-sort">⇅</span></th>
+                        <th class="imv-th">Im 9 <span class="imv-star">*</span> <span class="imv-sort">⇅</span></th>
+                        <th class="imv-th">MOQ <span class="imv-sort">⇅</span></th>
+                        <th class="imv-th">Item Names <span class="imv-star">*</span> <span class="imv-sort">⇅</span></th>
+                        <th class="imv-th">Item Group <span class="imv-star">*</span> <span class="imv-sort">⇅</span></th>
+                        <th class="imv-th">Item Alias <span class="imv-star">*</span> <span class="imv-sort">⇅</span></th>
+                        <th class="imv-th">Mrps <span class="imv-star">*</span> <span class="imv-sort">⇅</span></th>
+                        <th class="imv-th">Product Gro... <span class="imv-sort">⇅</span></th>
+                        <th class="imv-th">Weight <span class="imv-star">*</span> <span class="imv-sort">⇅</span></th>
+                        <th class="imv-th">MSQ <span class="imv-sort">⇅</span></th>
+                        <th class="imv-th">Scheme <span class="imv-star">*</span> <span class="imv-sort">⇅</span></th>
+                        <th class="imv-th">Part No <span class="imv-star">*</span> <span class="imv-sort">⇅</span></th>
+                        <th class="imv-th">Subcategory <span class="imv-star">*</span> <span class="imv-sort">⇅</span></th>
+                        <th class="imv-th">Product Cat... <span class="imv-sort">⇅</span></th>
+                        <th class="imv-th">Units Of Mea... <span class="imv-sort">⇅</span></th>
+                        <th class="imv-th-act">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="state.rows" t-as="row" t-key="row_index">
+                        <tr t-att-class="'imv-tr'+(state.editId===row.id?' imv-edit-row':'')">
+                            <!-- Item Name (sticky) -->
+                            <td class="imv-td-sticky">
+                                <span class="imv-cell" t-att-title="row.item_name"><t t-esc="trunc(row.item_name, 18)"/></span>
+                            </td>
+                            <!-- Category -->
+                            <td class="imv-td"><span class="imv-cell" t-att-title="row.category"><t t-esc="trunc(row.category)"/></span></td>
+                            <!-- Conversion -->
+                            <td class="imv-td imv-num">
+                                <t t-if="state.editId===row.id">
+                                    <input class="imv-inp" t-att-value="state.editVals.conversion" t-on-input="(ev)=>onFieldChange('conversion',ev)"/>
+                                </t>
+                                <t t-else=""><t t-esc="fmt(row.conversion, 0)"/></t>
+                            </td>
+                            <!-- Im 9 -->
+                            <td class="imv-td"><span class="imv-cell" t-att-title="row.im9"><t t-esc="trunc(row.im9)"/></span></td>
+                            <!-- MOQ -->
+                            <td class="imv-td imv-num"><t t-esc="row.moq"/></td>
+                            <!-- Item Names -->
+                            <td class="imv-td"><span class="imv-cell" t-att-title="row.item_names"><t t-esc="trunc(row.item_names)"/></span></td>
+                            <!-- Item Group -->
+                            <td class="imv-td"><span class="imv-cell" t-att-title="row.item_group"><t t-esc="trunc(row.item_group)"/></span></td>
+                            <!-- Item Alias -->
+                            <td class="imv-td"><span class="imv-cell" t-att-title="row.item_alias"><t t-esc="trunc(row.item_alias)"/></span></td>
+                            <!-- Mrps -->
+                            <td class="imv-td imv-num">
+                                <t t-if="state.editId===row.id">
+                                    <input class="imv-inp" t-att-value="state.editVals.mrps" t-on-input="(ev)=>onFieldChange('mrps',ev)"/>
+                                </t>
+                                <t t-else=""><t t-esc="fmt(row.mrps, 1)"/></t>
+                            </td>
+                            <!-- Product Group -->
+                            <td class="imv-td"><span class="imv-cell" t-att-title="row.product_group"><t t-esc="trunc(row.product_group)"/></span></td>
+                            <!-- Weight -->
+                            <td class="imv-td imv-num">
+                                <t t-if="state.editId===row.id">
+                                    <input class="imv-inp" t-att-value="state.editVals.weight" t-on-input="(ev)=>onFieldChange('weight',ev)"/>
+                                </t>
+                                <t t-else=""><t t-esc="fmt(row.weight, 2)"/></t>
+                            </td>
+                            <!-- MSQ -->
+                            <td class="imv-td imv-num"><t t-esc="row.msq"/></td>
+                            <!-- Scheme -->
+                            <td class="imv-td"><span class="imv-cell" t-att-title="row.scheme"><t t-esc="trunc(row.scheme)"/></span></td>
+                            <!-- Part No -->
+                            <td class="imv-td"><span class="imv-cell" t-att-title="row.part_no"><t t-esc="trunc(row.part_no)"/></span></td>
+                            <!-- Subcategory -->
+                            <td class="imv-td"><span class="imv-cell"><t t-esc="trunc(row.subcategory)"/></span></td>
+                            <!-- Product Cat -->
+                            <td class="imv-td"><span class="imv-cell" t-att-title="row.product_cat"><t t-esc="trunc(row.product_cat)"/></span></td>
+                            <!-- Units -->
+                            <td class="imv-td"><span class="imv-cell"><t t-esc="row.units_of_meas"/></span></td>
+                            <!-- Action -->
+                            <td class="imv-td-act">
+                                <t t-if="state.editId===row.id">
+                                    <button class="imv-save-btn" t-att-disabled="state.saving?'':undefined" t-on-click="saveEdit">
+                                        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                    </button>
+                                    <button class="imv-x-btn" t-on-click="cancelEdit">
+                                        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                    </button>
+                                </t>
+                                <t t-else="">
+                                    <button class="imv-edit-btn" t-on-click="()=>this.startEdit(row)">
+                                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                    </button>
+                                </t>
+                            </td>
+                        </tr>
+                    </t>
+                    <t t-if="!state.rows.length and !state.loading">
+                        <tr><td colspan="18" class="imv-empty">No items found</td></tr>
+                    </t>
+                </tbody>
+            </table>
+        </t>
+    </div>
+
+    <!-- ── Pagination ─────────────────────────────────────────── -->
+    <div class="imv-pager">
+        <button class="imv-pg-btn" t-att-disabled="state.page===1?'':undefined" t-on-click="prevPage">&#8249;</button>
+        <t t-foreach="pageNums" t-as="p" t-key="p_index">
+            <t t-if="p==='...'"><span class="imv-pg-dot">&#8230;</span></t>
+            <t t-else=""><button t-att-class="'imv-pg-btn'+(state.page===p?' on':'')" t-on-click="()=>this.goPage(p)"><t t-esc="p"/></button></t>
+        </t>
+        <button class="imv-pg-btn" t-att-disabled="state.page===state.totalPages?'':undefined" t-on-click="nextPage">&#8250;</button>
+    </div>
+
+</div>
+</t>
+</templates>

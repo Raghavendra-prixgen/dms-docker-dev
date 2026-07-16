@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="contact_reject_reason_form_wiz" model="ir.ui.view">
+          <field name="name">contact.reject.reason.form</field>
+          <field name="model">contact.reject.reason</field>
+          <field name="arch" type="xml">
+            <form string="Reason">
+                <group>
+                    <group>
+                        <field name="y_customer_type" invisible="1"/>
+                        <field name="y_partner_id" invisible="1"/>
+                        <field name="y_reasons" required="1"/>
+                    </group>              
+                </group>
+                <footer>
+                    <button name="update_reason" type="object" string="Update" class="oe_highlight"/>
+                    <button string="Cancel" class="btn btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+          </field>
+    </record>
+
+    <record id="contact_reject_reason_action_wiz" model="ir.actions.act_window">
+        <field name="name">Action Window contact reject reason</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">contact.reject.reason</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="contact_reject_reason_form_wiz"/>
+        <field name="context">{'y_active_id' : active_id}</field>
+        <field name="target">new</field>
+    </record>
+
+
+    <record id="view_partner_form_inherite1" model="ir.ui.view">
+        <field name="name">res.partner.view.form.inherit1</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="/form/sheet/notebook/page[2]/group//field[@name='user_id']" position="attributes">
+                <attribute name="options">{'no_create': True,'no_open': True,'no_create_edit':True}</attribute>
+            </xpath>
+            <xpath expr="/form/sheet/notebook/page[2]/group//field[@name='property_product_pricelist']" position="attributes">
+                <attribute name="options">{'no_create': True,'no_open': True,'no_create_edit':True}</attribute>
+            </xpath>
+            <xpath expr="/form/sheet/notebook/page[2]/group//field[@name='property_delivery_carrier_id']" position="attributes">
+                <attribute name="options">{'no_create': True,'no_open': True,'no_create_edit':True}</attribute>
+            </xpath>
+            <xpath expr="/form/sheet/notebook/page[2]/group//field[@name='user_id']" position="after">
+                <field name="y_partner_category" options="{'no_create': True,'no_open': True,'no_create_edit':True}" required="y_customer==True or y_vendor==True"/>
+                <field name="y_partner" invisible="1"/>
+            </xpath>
+            <xpath expr="/form/sheet/notebook/page[2]/group//field[@name='user_id']" position="before">
+                <label for="y_customer"/>
+                <div class="o_row" name="customer">
+                    <field name="y_customer"   nolabel="1" readonly="y_is_contact_approval_required" />
+                    <!-- <button   name="approve_customer" invisible="y_customer == True"  string="Approve" type="object" title="Approve Customer"  groups="contact_base.approve_contacts_customer" class="oe_link"  icon="fa-check"/>
+                    <button   name="%(contact_reject_reason_action_wiz)d"  context="{'customer_type':'customer'}" string="Reject" type="action" title="Reject Customer"  groups="contact_base.approve_contacts_customer" class="oe_link" style="color:red" icon="fa-ban"/>  -->
+                </div>            
+            </xpath>
+            <xpath expr="/form/sheet/notebook/page[2]/group//field[@name='property_supplier_payment_term_id']" position="before">
+                <label for="y_vendor"/>
+                <div class="o_row" name="vendor">
+                    <field name="y_vendor"   nolabel="1" readonly="y_is_contact_approval_required"/>
+                    <!-- <button name="approve_vendor" string="Approve" invisible = "y_vendor == True"  type="object" title="Approve Vendor" groups="contact_base.approve_contacts_vendor" class="oe_link" icon="fa-check"/>
+                    <button name="%(contact_reject_reason_action_wiz)d" string="Reject"   context="{'customer_type':'vendor'}" type="action" title="Reject Vendor" style="color:red" groups="contact_base.approve_contacts_vendor" class="oe_link" icon="fa-ban"/>   -->
+                </div>
+                <field name="y_contact" invisible='1'/>
+            </xpath>
+            <field name="ref" position="before">
+                <field name="y_is_contact_approval_required" invisible="1"/>
+                <field name="y_sequence_present" invisible="1"/>
+            </field>
+            <field name="ref" position="attributes">
+                <attribute name="readonly">y_partner == True</attribute>
+            </field>              
+        </field>
+    </record> 
+
+    <record id="view_partner_tree_inherit" model="ir.ui.view">
+        <field name="name">res.partner.view.list.inherit1</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <field name="user_id" position="after">
+                <field name="y_partner_category" optional="hide"/>
+                <field name="ref" optional="hide"  force_save="1"/>
+            </field> 
+        </field>
+    </record> 
+
+    <record model="ir.ui.view" id="partner_category_form">
+        <field name="name">partner.category.form</field>
+        <field name="model">partner.category</field>
+        <field name="arch" type="xml">
+            <form name="Partner Category">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="y_name" required='1'/>
+                            <field name="y_zparent"/>
+                            <field name="y_full_name" invisible='1'/>
+                        </group>
+                        <group>
+                            <field name="y_active_id"/>
+                            <field name="y_partner_category" options="{'no_create': True}" invisible="y_active_id== False"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="partner_category_tree">
+        <field name="name">partner.category.list</field>
+        <field name="model">partner.category</field>
+        <field name="arch" type="xml">
+            <list string="Partner Category">
+                <field name="y_name"/>
+                <field name="y_zparent"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_partner_category_development" model="ir.actions.act_window">
+        <field name="name">Partner Category</field>
+        <field name="res_model">partner.category</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_partner_category_in_config" 
+              name="Partner Category" 
+              parent="contacts.res_partner_menu_config" 
+              action="action_partner_category_development" 
+              sequence="99"/>
+
+
+    <record id="account_move_view_form_is_customer"  model="ir.ui.view">
+        <field name="name">account.move.view.form.inherited</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <field name='partner_id' position='after'>
+                <field name='y_is_customer' invisible = "move_type in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt','entry')"/>
+                <field name='y_is_vendor' invisible = "move_type in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt','entry')"/>
+               </field>
+               <field name="partner_id" position="attributes">
+                    <attribute name="options">{'no_create': True, 'no_create_edit':True}</attribute>
+                    <attribute name="readonly">state != 'draft' </attribute>
+               </field>
+        </field>
+    </record>
+
+
+    <record id="view_account_payment_form_for_customer"  model="ir.ui.view">
+        <field name="name">account.payment.view.form.inherited</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+           <!--   <field name="partner_id" position='attributes'>
+                <attribute name='domain'>['|',('y_customer', '=', y_is_customer),('y_vendor','=',y_is_vendor),('y_contact','=', False)]
+                </attribute>
+            </field> -->
+            <field name='partner_type' position='after'>
+                <field name='y_is_customer' invisible='1' />
+                <field name='y_is_vendor' invisible='1'/>
+               </field>
+        </field>
+    </record>
+
+    <record id="view_order_form_for_customer"  model="ir.ui.view">
+        <field name="name">sale.order.view.form.inherited</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+             <xpath expr="//page/group/group[@name='sales_person']" position="inside">
+                <field name="y_partner_category_id" />
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <!-- <attribute name="domain">[('y_customer','=',True)]</attribute> -->
+                <attribute name="options">{'no_create': True, 'no_create_edit':True}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="purchase_order_form_for_vendor"  model="ir.ui.view">
+        <field name="name">purchase.order.view.form.inherited</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='other_info']//field[@name='user_id']" position="after">
+                <field name="y_partner_category_id" />
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <!-- <attribute name="domain">[('y_vendor','=',True)]</attribute> -->
+                <attribute name="options">{'no_create': True, 'no_create_edit':True}</attribute>
+            </xpath>             
+        </field>
+    </record>
+
+    <record id="contacts.action_contacts" model="ir.actions.act_window">
+        <field name="name">Contacts</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,list,form,activity</field>
+        <field name="search_view_id" ref="base.view_res_partner_filter"/>
+        <field name="context">{'default_is_company': True}</field>
+        <field name="domain">[('y_customer','=',False),('y_vendor','=',False)]</field>
+        <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Create a contact in your address book
+          </p><p>
+            Odoo helps you to easily track all activities related to a customer.
+          </p>
+        </field>
+    </record>
+
+    <record id="account.res_partner_action_customer" model="ir.actions.act_window">
+        <field name="name">Customers</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{'search_default_customer': 1,'res_partner_search_mode': 'customer', 'default_is_company': True, 'default_customer_rank': 1,'default_customer':True}</field>
+        <field name="domain">[('y_customer','=',True)]</field>
+        <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Create a new customer in your address book
+          </p><p>
+            Odoo helps you easily track all activities related to a customer.
+          </p>
+        </field>
+    </record>
+
+    <record id="account.res_partner_action_supplier" model="ir.actions.act_window">
+        <field name="name">Vendors</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{'search_default_supplier': 1,'res_partner_search_mode': 'supplier', 'default_is_company': True, 'default_supplier_rank': 1,'default_vendor':True}</field>
+        <field name="domain">[('y_vendor','=',True)]</field>
+        <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Create a new supplier in your address book
+          </p><p>
+            Odoo helps you easily track all activities related to a supplier.
+          </p>
+        </field>
+    </record>
+    <record id="base.action_partner_form" model="ir.actions.act_window">
+        <field name="name">Customers</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{'res_partner_search_mode': 'y_customer'}</field>
+        <field name="domain">[('y_customer','=',True)]</field>
+        <field name="search_view_id" ref="base.view_res_partner_filter"/>
+        <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Create a new customer in your address book
+          </p><p>
+            Odoo helps you easily track all activities related to a customer.
+          </p>
+        </field>
+    </record>
+
+  <!--   <record id="view_order_form_for_customer_cm"  model="ir.ui.view">
+        <field name="name">sale.order.view.form.inherited.cm</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+              <attribute name="domain">['|',('company_id', '=', False), ('company_id', '=', company_id),'|','|',('y_customer','=',True),'&amp;',('y_customer','=',True),('y_vendor','=',True),'&amp;',('y_customer','=',False),('y_vendor','=',False)]</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="purchase_order_form_for_vendor_cm"  model="ir.ui.view">
+        <field name="name">purchase.order.view.form.inherited.cm</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="domain">['|',('company_id', '=', False), ('company_id', '=', company_id),'|','|',('y_vendor','=',True),'&amp;',('y_customer','=',True),('y_vendor','=',True),'&amp;',('y_customer','=',False),('y_vendor','=',False)]</attribute>
+            </xpath>             
+        </field>
+    </record> -->
+</odoo>

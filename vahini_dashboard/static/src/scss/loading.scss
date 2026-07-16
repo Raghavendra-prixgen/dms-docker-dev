@@ -1,0 +1,118 @@
+.vd-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 60px 20px;
+    color: var(--text2);
+    font-size: 13px;
+}
+
+.vd-spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: vd-spin .7s linear infinite;
+}
+
+@keyframes vd-spin {
+    to { transform: rotate(360deg); }
+}
+
+.vd-error {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 14px;
+    padding: 12px 16px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    color: #dc2626;
+    font-size: 12px;
+
+    button {
+        margin-left: auto;
+        padding: 5px 12px;
+        background: #dc2626;
+        color: #fff;
+        border-radius: 6px;
+        font-size: 11px;
+        cursor: pointer;
+        border: none;
+        &:hover { background: #b91c1c; }
+    }
+}
+
+.vd-date-picker {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: var(--shadow-lg);
+    padding: 14px;
+    z-index: 200;
+    min-width: 240px;
+}
+
+.vd-dp-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+
+    label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text2);
+        width: 36px;
+        flex-shrink: 0;
+    }
+
+    input[type="date"] {
+        flex: 1;
+        padding: 5px 8px;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        font-size: 12px;
+        background: var(--bg);
+        color: var(--text1);
+        outline: none;
+        &:focus { border-color: var(--blue); }
+    }
+}
+
+.vd-dp-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 4px;
+}
+
+.vd-dp-cancel {
+    padding: 5px 12px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text2);
+    font-size: 11px;
+    cursor: pointer;
+    &:hover { background: var(--border); }
+}
+
+.vd-dp-apply {
+    padding: 5px 14px;
+    border-radius: 7px;
+    border: none;
+    background: var(--blue);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    &:hover { background: var(--blue-h); }
+}

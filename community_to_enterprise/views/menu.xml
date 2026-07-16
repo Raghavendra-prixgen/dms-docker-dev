@@ -1,0 +1,33 @@
+<!-- <odoo>
+    <menuitem id="dms_menu_items"
+            name="Dms Menu"
+            parent="sale.sale_menu_root"
+            sequence="50">
+
+
+            <menuitem id="menu_duplicate_sale_order"
+                name="Duplicate Sale Order"
+                action="community_to_enterprise.duplicate_sale_order_action"/>
+            
+
+            <menuitem id="menu_lacalization_for_dms" name="Localization">
+
+                <menuitem id="menu_partner_district"
+                name="Partner District"
+                action="dms_custom_fileds.partner_district_action"/>
+
+                <menuitem id="menu_partner_taluk"
+                name="Partner Taluk"
+                action="dms_custom_fileds.partner_taluk_action"/>
+
+            </menuitem>
+         
+
+             <menuitem id="tally_stocks" name="Tally Closing Stocks">
+                <menuitem id="tally_closing_stock_menu" name="Tally Closing Stocks"
+                action="community_to_enterprise.action_tally_closing_stock"/>
+
+            </menuitem>
+    </menuitem>
+
+</odoo> -->

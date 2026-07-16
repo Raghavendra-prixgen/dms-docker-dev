@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sale_doc_type,sale_doc_type,model_sale_doc_type,base.group_user,1,1,1,0
+access_create_sale_quotation,Blanket Sale Popup,model_create_sale_quotation,base.group_user,1,1,1,1
+access_create_sale_quotation_line,Blanket Sale Popup,model_create_sale_quotation_line,base.group_user,1,1,1,1
+access_saleorder_short_close_wizard,saleorder_short_close_wizard,model_saleorder_short_close_wizard,base.group_user,1,1,1,1
+access_sales_short_close_reason,sales_short_close_reason,model_sales_short_close_reason,,1,1,1,1

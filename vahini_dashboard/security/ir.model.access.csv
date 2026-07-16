@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_vahini_dashboard,vahini.dashboard,model_vahini_dashboard,,1,0,0,0
+access_vahini_announcement_all,vahini.announcement.all,model_vahini_announcement,base.group_user,1,0,0,0
+access_vahini_announcement_mgr,vahini.announcement.mgr,model_vahini_announcement,base.group_system,1,1,1,1

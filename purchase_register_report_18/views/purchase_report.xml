@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="action_purchase_report_wizard" model="ir.actions.act_window">
+        <field name="name">Purchase Register Report</field>
+        <field name="res_model">purchase.register.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_purchase_report_wizard"/>
+    </record> 
+
+    <menuitem id="menu_purchase_register_report" name="Purchase Register Report" action="action_purchase_report_wizard" parent="purchase.purchase_report_main" sequence="100"/>
+
+
+</odoo>

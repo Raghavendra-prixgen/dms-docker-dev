@@ -1,0 +1,17 @@
+
+<odoo>
+    <data> 
+       
+
+        <record id="draft_partner_sequence" model="ir.sequence">
+            <field name="name">Draft Partner Sequence</field>
+            <field name="code">draft.partner</field>
+            <field name="prefix">VD-</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"></field>
+        </record>
+
+
+
+    </data>
+</odoo>

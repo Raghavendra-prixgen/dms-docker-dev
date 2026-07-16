@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="vahini_dashboard.SnapMetrics">
+    <div class="vd-metrics">
+        <t t-foreach="props.metrics" t-as="m" t-key="m.title">
+            <div class="vd-metric-card" t-att-style="cardStyle(m)">
+                <div class="vd-metric-top">
+                    <div class="vd-metric-icon-box" t-att-style="iconBoxStyle(m)">
+                        <t t-call="vahini_dashboard.Icon">
+                            <t t-set="icon"  t-value="m.icon"/>
+                            <t t-set="size"  t-value="18"/>
+                            <t t-set="color" t-value="m.color"/>
+                        </t>
+                    </div>
+                    <div class="vd-metric-info">
+                        <div class="vd-metric-title"><t t-esc="m.title"/></div>
+                        <div class="vd-metric-date">
+                            <t t-if="m.date"><t t-esc="m.date"/></t>
+                            <t t-else="">&#160;</t>
+                        </div>
+                        <div class="vd-metric-value pt-1"><t t-esc="fmtValue(m.value)"/></div>
+                    </div>
+                </div>
+
+            </div>
+        </t>
+    </div>
+</t>
+
+</templates>

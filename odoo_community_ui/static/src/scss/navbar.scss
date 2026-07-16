@@ -1,0 +1,290 @@
+// ── Vahini Theme Variables ────────────────────────────────────────────────────
+$sb-bg:      #1e293b;   // sidebar background (dark navy)
+$sb-hover:   #2d3f55;   // sidebar item hover
+$sb-active:  #4f6df5;   // active accent blue
+$sb-text:    #cbd5e1;   // sidebar text
+$sb-text2:   #94a3b8;   // sidebar muted text
+$sb-border:  rgba(255,255,255,.08);
+$sb-width:   240px;
+
+body.o_web_client {
+
+  // ── Sidebar (nav-wrapper-ui) ────────────────────────────────────────────────
+  .nav-wrapper-ui {
+    display: none;
+    &.toggle-show {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background-color: $sb-bg;
+      width: $sb-width;
+      min-width: $sb-width;
+      height: 100%;
+      z-index: 999;
+      box-shadow: 2px 0 12px rgba(0,0,0,.18);
+      transition: width .25s ease;
+
+      header.o_navbar {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+    }
+
+    // ── Bottom user panel ─────────────────────────────────────────────────────
+    .btm-user-menu {
+      z-index: 999;
+      width: $sb-width;
+      border-top: 1px solid $sb-border;
+    }
+    .sytray-container-ui {
+      padding: 8px;
+      button {
+        width: 100%;
+        border: none !important;
+        box-shadow: none !important;
+        background: rgba(255,255,255,.06) !important;
+        border-radius: 10px;
+        padding: 8px 10px;
+        transition: background .2s;
+        &:hover { background: rgba(255,255,255,.12) !important; }
+        img { width: 32px; border-radius: 50%; }
+      }
+      mark {
+        font-size: 11px;
+        background: rgba(255,255,255,.1) !important;
+        color: $sb-text2 !important;
+        padding: 4px 8px;
+        border-radius: 6px;
+        display: block;
+      }
+      .o_user_menu .o-dropdown--menu {
+        min-width: 14rem !important;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.18);
+        .dropdown-item {
+          padding: 6px 16px !important;
+          font-size: 13px;
+          &:hover { background: #eef2ff; color: #4f6df5; }
+        }
+      }
+    }
+
+    @media (max-width: 768px) {
+      position: absolute;
+      top: 0; bottom: 0;
+      height: 100%; z-index: 11;
+    }
+  }
+
+  // ── Company logo area ───────────────────────────────────────────────────────
+  header.o_navbar {
+    .o_company_logo {
+      padding: 14px 16px !important;
+      border-bottom: 1px solid $sb-border;
+      background: rgba(255,255,255,.04);
+      .company_logo {
+        max-height: 36px;
+        max-width: 140px;
+        object-fit: contain;
+        filter: brightness(1.1);
+      }
+      .company_logo_icon { display: none !important; }
+      .fa-bars {
+        color: $sb-text2;
+        font-size: 18px;
+        cursor: pointer;
+        transition: color .2s;
+        &:hover { color: #fff; }
+      }
+    }
+    nav {
+      background-color: transparent !important;
+      border-bottom: none !important;
+    }
+  }
+
+  // ── Primary nav menu ────────────────────────────────────────────────────────
+  ul#menu-dropdown {
+    list-style: none !important;
+    padding: 8px 0 !important;
+    margin: 0;
+
+    li {
+      a.main_link {
+        display: flex;
+        align-items: center;
+        padding: 9px 14px;
+        font-size: 13px;
+        font-weight: 500;
+        color: $sb-text !important;
+        border-radius: 8px;
+        margin: 2px 8px;
+        text-decoration: none;
+        transition: background .18s, color .18s;
+        .app_icon {
+          width: 28px; height: 28px;
+          margin-right: 10px; flex-shrink: 0;
+          display: flex; align-items: center; justify-content: center;
+          background: rgba(255,255,255,.08);
+          border-radius: 6px;
+          img { width: 18px; height: 18px; object-fit: contain; }
+        }
+        &:hover {
+          background: $sb-hover !important;
+          color: #fff !important;
+        }
+        &.active, &:focus {
+          background: $sb-active !important;
+          color: #fff !important;
+        }
+      }
+    }
+
+    // Sub-menu panel (slides in)
+    ul.header-sub-menus.main {
+      list-style: none !important;
+      padding: 8px 10px;
+      z-index: 3;
+      position: absolute;
+      left: 0; top: 0;
+      background: darken($sb-bg, 4%) !important;
+      height: 100%; width: 100%;
+      overflow-y: auto;
+      &:not(.show) { display: none; }
+
+      .back_main_menu {
+        padding: 10px 8px;
+        margin-bottom: 6px;
+        border-bottom: 1px solid $sb-border;
+        h3 {
+          color: #fff !important;
+          font-size: 14px;
+          cursor: pointer;
+          margin: 0;
+        }
+      }
+      li {
+        margin: 2px 0;
+        background: transparent;
+        .sub-main-menu {
+          cursor: pointer;
+          font-size: 13px;
+          font-weight: 600;
+          color: $sb-text !important;
+          padding: 8px 10px;
+          border-radius: 7px;
+          display: flex; align-items: center;
+          &:hover { background: $sb-hover !important; color: #fff !important; }
+        }
+        .header-sub-menus {
+          list-style: none !important;
+          border-left: 2px solid $sb-active;
+          padding: 0 0 0 8px;
+          margin: 4px 0;
+        }
+        a.child_menus {
+          display: block;
+          padding: 6px 10px;
+          font-size: 12px;
+          color: $sb-text2 !important;
+          border-radius: 5px;
+          text-decoration: none;
+          &:hover { color: #fff !important; background: $sb-hover; }
+        }
+      }
+      a { padding: 0.5rem !important; font-size: 12px !important; }
+    }
+  }
+
+  // ── Scrollbar styling ───────────────────────────────────────────────────────
+  .nav-wrapper-ui {
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); border-radius: 4px; }
+  }
+}
+
+// Menu width
+.menu {
+  display: block;
+  width: $sb-width;
+  height: 100%;
+  transition: all .3s ease;
+  z-index: 999;
+  a { display: block; white-space: nowrap; }
+}
+.menu, .menu a, .menu a:visited {
+  color: #cbd5e1;
+  text-decoration: none !important;
+  position: relative;
+}
+.overflow-container {
+  position: relative;
+  height: 100% !important;
+  overflow-y: auto;
+  display: block;
+}
+
+/* ── Sidebar user menu items (Preferences, Logout, etc.) ── */
+.sidebar-user-menu {
+    .sidebar-user-menu-item {
+        font-size: 13px;
+        opacity: 0.85;
+        transition: background 0.15s, opacity 0.15s;
+        border-radius: 4px;
+        margin: 0 8px;
+
+        &:hover {
+            background: rgba(255,255,255,0.12);
+            opacity: 1;
+        }
+
+        i.fa {
+            width: 16px;
+            text-align: center;
+            opacity: 0.75;
+        }
+    }
+}
+
+/* ── Sidebar action items (Preferences, Logout) ── */
+.sytray-container-ui {
+    .sidebar-usermenu-actions {
+        border-top: 1px solid rgba(255,255,255,0.1);
+        padding: 6px 8px;
+
+        .sidebar-action-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            color: #cbd5e1 !important;
+            text-decoration: none !important;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.15s;
+
+            &:hover {
+                background: rgba(255,255,255,0.1);
+                color: #fff !important;
+            }
+
+            i.fa {
+                width: 16px;
+                text-align: center;
+                opacity: 0.8;
+            }
+        }
+    }
+}
+
+/* Fix header overflow so btm-user-menu is not clipped */
+.nav-wrapper-ui.toggle-show {
+    header.o_navbar {
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+    }
+}

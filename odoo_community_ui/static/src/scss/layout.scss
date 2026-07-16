@@ -1,0 +1,283 @@
+// ── Vahini Theme — Layout overrides for Odoo 18 Community ────────────────────
+// Colors matching vahini_dashboard
+$accent:     #4f6df5;
+$accent-h:   #3b57d4;
+$bg:         #f0f2f5;
+$card:       #ffffff;
+$text1:      #1e293b;
+$text2:      #64748b;
+$border:     #e2e8f0;
+$sb-bg:      #1e293b;
+$shadow:     0 1px 6px rgba(0,0,0,.08);
+$shadow-lg:  0 8px 24px rgba(0,0,0,.14);
+$th-bg:      #1e3a5c;  // table header matches item master
+
+body.o_web_client {
+  background: $bg !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  .wrapper-container-ui {
+    display: flex;
+    width: 100%;
+
+    .content-wrapper-ui {
+      width: 100%;
+      overflow-x: clip;
+      background: $bg;
+
+      // ── Top navbar (breadcrumb bar) ───────────────────────────────────────
+      .o_main_navbar {
+        padding: 0 16px;
+        background: $card !important;
+        border-bottom: 1px solid $border !important;
+        box-shadow: $shadow;
+        min-height: 48px;
+
+        .o_menu_systray {
+          align-items: center;
+          .o_user_menu { display: none !important; }
+
+          button.dropdown-toggle {
+            background: $bg !important;
+            border: 1px solid $border !important;
+            margin: 0 3px;
+            width: 32px; height: 32px;
+            border-radius: 7px;
+            display: flex; align-items: center; justify-content: center;
+            i { color: $text2 !important; font-size: 14px !important; }
+            &:hover { background: #eef2ff !important; border-color: $accent !important;
+              i { color: $accent !important; } }
+            .badge.rounded-pill {
+              position: absolute; right: -6px; top: -4px;
+              background: $accent !important; color: #fff !important;
+              border: none; font-size: 9px; padding: 2px 5px;
+            }
+          }
+          .o_website_switcher_container,.o_edit_website_container,
+          .o_new_content_container,.o_mobile_preview {
+            button.dropdown-toggle, a.o_nav_entry, .o_nav_entry, a.btn {
+              width: auto !important;
+              background: $bg !important;
+              border: 1px solid $border !important;
+              margin: 0 3px;
+              height: 32px !important;
+              border-radius: 7px !important;
+              color: $text2 !important;
+              &:hover { background: #eef2ff !important; color: $accent !important; }
+            }
+          }
+          .o_mobile_menu_toggle { display: none !important; }
+          .o-mail-DiscussSystray {
+            box-shadow: $shadow-lg;
+            border-radius: 12px;
+          }
+        }
+
+        // Sidebar toggle button
+        .sidebar-toggler {
+          cursor: pointer;
+          .sidebar-toggle-ui {
+            font-size: 12px; color: $text2;
+            i.back-arrow { width: 0; visibility: hidden; opacity: 0; }
+          }
+          &:hover .sidebar-toggle-ui {
+            i.toggle { display: none !important; }
+            i.back-arrow { visibility: visible; opacity: 1; transition: all .2s;
+              width: 100% !important; font-size: 16px; font-weight: 600; }
+          }
+        }
+      }
+
+      // ── Buttons ────────────────────────────────────────────────────────────
+      .btn-link { color: $accent !important; }
+      .btn.btn-primary {
+        background: $accent !important; color: #fff !important;
+        border-color: $accent !important; border-radius: 7px;
+        &:hover,&:focus,&:active {
+          background: $accent-h !important; border-color: $accent-h !important;
+        }
+      }
+      .btn.btn-secondary {
+        background: #fff !important; color: $accent !important;
+        border: 1px solid $accent !important; border-radius: 7px;
+        &:hover,&:focus { background: #eef2ff !important; }
+      }
+
+      // ── Control panel ──────────────────────────────────────────────────────
+      .o_action_manager {
+        height: 100%; width: 100%;
+
+        .o_control_panel {
+          padding: 10px 16px !important;
+          background: $card;
+          border-bottom: 1px solid $border;
+          .o_control_panel_breadcrumbs {
+            .o_control_panel_main_buttons {
+              .btn-outline-primary {
+                color: $accent !important; border-color: $accent !important;
+                border-radius: 7px;
+                &:hover { color: #fff !important; background: $accent !important; }
+              }
+            }
+            .breadcrumb .breadcrumb-item a { color: $accent !important; }
+          }
+          .o_control_panel_actions {
+            .btn-outline-secondary {
+              border-color: $border !important; border-radius: 7px;
+              i,span { color: $text2 !important; }
+              &:hover { border-color: $accent !important;
+                i,span { color: $accent !important; } }
+            }
+            .o_cp_searchview .o_searchview {
+              border-radius: 8px 0 0 8px; border-color: $border;
+              background: $bg;
+            }
+            .o-dropdown button.o_searchview_dropdown_toggler {
+              border-radius: 0 8px 8px 0;
+            }
+          }
+          .o_control_panel_navigation {
+            button {
+              font-size: 13px; border-radius: 7px !important;
+              border-color: $border; background: $card !important;
+              color: $text2 !important; height: 32px; margin: 0 2px;
+              &.active { background: #eef2ff !important; color: $accent !important;
+                border-color: $accent !important; }
+              &:hover { background: #eef2ff !important; color: $accent !important; }
+            }
+          }
+        }
+
+        .o_content {
+          overflow: auto !important; height: 100%;
+          max-height: calc(100vh - 96px);
+        }
+
+        // ── Form view ───────────────────────────────────────────────────────
+        .o_form_view_container .o_form_sheet_bg {
+          .o_form_statusbar {
+            background: $card;
+            border-bottom: 1px solid $border;
+            .o_statusbar_buttons {
+              .btn-primary { background: $accent !important; border-color: $accent !important;
+                border-radius: 7px;
+                &:hover { background: $accent-h !important; } }
+              .btn-secondary { background: #fff !important; border-color: $border !important;
+                border-radius: 7px;
+                &:hover { background: $bg !important; } }
+            }
+            .o_statusbar_status .o_arrow_button {
+              font-size: 13px; background: #eef2ff !important; color: $text1 !important;
+              &:after { border-left-color: #eef2ff !important; }
+              &.o_arrow_button_current {
+                background: $accent !important; color: #fff !important;
+                &:after { border-left-color: $accent !important; }
+              }
+            }
+          }
+          .o_form_sheet {
+            border-radius: 12px; box-shadow: $shadow; border: 1px solid $border;
+            background: $card;
+            .o_cell { label,span,a { font-size: 14px !important; } }
+            .o_form_uri span:first-child { color: $accent !important; }
+            .o_notebook .o_notebook_headers .nav.nav-tabs {
+              border-top: 1px solid $border; padding: 0 !important;
+              .nav-item .nav-link {
+                color: $text2; font-size: 13px; font-weight: 500;
+                &.active { color: $accent !important; border-bottom: 2px solid $accent;
+                  background: $card !important; font-weight: 600; }
+              }
+            }
+          }
+          .o_list_renderer table a { color: $accent !important; }
+        }
+
+        // ── List view ───────────────────────────────────────────────────────
+        .o_list_view.o_action { height: 100%;
+          .o_content { padding: 12px 16px; }
+          .o_list_renderer {
+            border: none !important; border-radius: 12px; box-shadow: $shadow;
+            overflow: hidden;
+            .o_list_table {
+              thead th {
+                padding: 10px 12px;
+                background: $th-bg !important;
+                color: #fff !important;
+                font-size: 11.5px; font-weight: 600;
+                button { color: #fff !important; }
+                .form-check-input { background: rgba(255,255,255,.2) !important; }
+              }
+              tbody {
+                tr { border: none;
+                  td { border: none; padding: 10px 12px; color: $text1 !important;
+                    font-size: 13px; font-weight: 400; }
+                  &:nth-child(even) td { background: #f8fafc; }
+                  &:hover td { background: #eef2ff !important; }
+                  &.o_data_row { border-bottom: 1px solid $border !important; }
+                }
+              }
+              tfoot tr td { padding: 8px 12px; color: $text2 !important;
+                border-top: 2px solid $border; font-weight: 600; }
+            }
+            .form-check .form-check-input:checked {
+              background: $accent !important; border-color: $accent !important;
+            }
+          }
+        }
+
+        // ── Kanban view ─────────────────────────────────────────────────────
+        .o_kanban_view .o_kanban_record {
+          margin: 10px 6px 0 !important;
+          .oe_kanban_card, .oe_kanban_global_click {
+            border-radius: 10px; border: 1px solid $border;
+            box-shadow: $shadow; padding: 14px; background: $card;
+            &:hover { box-shadow: $shadow-lg; border-color: lighten($accent,20%); }
+          }
+        }
+
+        // ── Graph view ──────────────────────────────────────────────────────
+        .o_graph_view .o_content { height: calc(100vh - 100px); }
+
+        // ── Discuss view ────────────────────────────────────────────────────
+        .o-mail-Discuss {
+          background: $bg !important;
+          .o-mail-DiscussSidebar {
+            margin: 8px; border: none !important;
+            box-shadow: $shadow; border-radius: 12px;
+            .o-mail-DiscussSidebar-item {
+              background: #eef2ff; color: $accent !important;
+              border-radius: 7px; margin: 4px 8px;
+              padding: 8px 0 !important; font-weight: 600;
+            }
+          }
+          .o-mail-Discuss-content {
+            overflow: scroll !important;
+            .o-mail-Thread {
+              overflow: scroll; margin: 8px;
+              box-shadow: $shadow; border: 1px solid $border;
+              border-radius: 12px;
+              .o-mail-Message .o-mail-Message-core .o-min-width-0
+              .o-mail-Message-content .o-mail-Message-bubble {
+                border-radius: 0 10px 6px 10px !important;
+                .o-mail-Message-body { padding: 12px 20px !important; }
+              }
+            }
+            .o-mail-Composer .o-mail-Composer-coreMain {
+              .btn { color: $text2 !important; }
+              .o-mail-Composer-send {
+                background: $accent !important; color: #fff !important;
+                border-radius: 7px; margin: 0 !important;
+              }
+            }
+          }
+        }
+
+        // ── Settings view ───────────────────────────────────────────────────
+        .o-settings-form-view .o_setting_container .settings_tab
+          .app_name { font-size: 14px !important; color: $text1 !important; }
+      }
+    }
+  }
+
+  &.editor_has_snippets_hide_backend_navbar .nav-wrapper-ui { display: none; }
+}

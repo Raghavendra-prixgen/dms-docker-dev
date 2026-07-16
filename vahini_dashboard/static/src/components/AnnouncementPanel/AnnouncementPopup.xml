@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="vahini_dashboard.AnnouncementPopup">
+    <div class="vd-ann-popup-overlay" t-on-click="dismiss">
+        <div class="vd-ann-popup" t-on-click.stop="">
+            <div class="vd-ann-popup-hdr">
+                <h2>📋 Latest Announcements</h2>
+                <button class="vd-ann-close" t-on-click="dismiss">✕</button>
+            </div>
+            <div class="vd-ann-popup-body">
+                <t t-foreach="props.announcements" t-as="ann" t-key="ann.id">
+                    <div class="vd-ann-popup-card"
+                         t-att-style="'border-left-color:'+props.typeConf(ann.ann_type).color">
+                        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+                            <span class="vd-ann-badge"
+                                  t-att-style="'background:'+props.typeConf(ann.ann_type).bg+';color:'+props.typeConf(ann.ann_type).color">
+                                <t t-esc="props.typeConf(ann.ann_type).icon"/>
+                                <t t-esc="props.typeConf(ann.ann_type).label"/>
+                            </span>
+                        </div>
+                        <div class="vd-ann-card-title" style="font-size:14px"><t t-esc="ann.title"/></div>
+                        <div class="vd-ann-card-msg"   style="font-size:12px;margin-top:4px"><t t-esc="ann.message"/></div>
+                        <t t-if="ann.link">
+                            <a class="vd-ann-link" t-att-href="ann.link" target="_blank"
+                               style="display:inline-block;margin-top:6px">🔗 View Details</a>
+                        </t>
+                    </div>
+                </t>
+            </div>
+            <button class="vd-ann-popup-dismiss" t-on-click="dismiss">Got it! ✓</button>
+        </div>
+    </div>
+</t>
+</templates>

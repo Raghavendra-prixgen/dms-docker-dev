@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_partner_category,partner.category,model_partner_category,base.group_user,1,1,1,1
+access_contact_reject_reason,contact.reject.reason,model_contact_reject_reason,base.group_user,1,1,1,1
+
+access_res_partner_approval_master,res_partner_approval_master,model_res_partner_approval_master,,1,1,1,0
+access_res_partner_approval_master_line,res_partner_approval_master_line,model_res_partner_approval_master_line,,1,1,1,1
+
+access_res_partner_approval,res_partner_approval,model_res_partner_approval,,1,1,1,1
+access_res_partner_approval_wizard,res_partner_approval_wizard,model_res_partner_approval_wizard,,1,1,1,1
+
+access_partner_approval_remarks,partner_approval_remarks,model_partner_approval_remarks,,1,1,1,1
+
+access_partner_approval_revoke,partner_approval_revoke,model_partner_approval_revoke,,1,1,1,1

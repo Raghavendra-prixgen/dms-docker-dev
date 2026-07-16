@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="vahini_dashboard.FollowUpView">
+<div class="fup-root">
+
+    <!-- Header -->
+    <div class="fup-header">
+        <div class="fup-title-row">
+            <div class="fup-title-icon">P</div>
+            <h2 class="fup-title">Follow-Up</h2>
+            <button class="fup-gear">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </button>
+        </div>
+        <div class="fup-toolbar">
+            <button class="fup-report-btn" t-on-click="downloadReport">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Follow Up Report
+            </button>
+            <label class="fup-compact-wrap">
+                <span class="fup-compact-label">Compact</span>
+                <div t-att-class="'fup-toggle'+(state.compact?' on':'')" t-on-click="toggleCompact">
+                    <div class="fup-toggle-knob"/>
+                </div>
+            </label>
+            <div class="fup-search-wrap">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input class="fup-search" placeholder="Search customer, owner, contact..."
+                       t-on-input="onSearch"/>
+            </div>
+            <button class="fup-dl-btn" title="Download" t-on-click="downloadReport">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="fup-tabs">
+        <button t-att-class="'fup-tab'+(state.tab==='all'?' active':'')"
+                t-on-click="() => this.setTab('all')">
+            All (<t t-esc="state.tabCounts.all || 0"/>)
+        </button>
+        <button t-att-class="'fup-tab'+(state.tab==='current'?' active':'')"
+                t-on-click="() => this.setTab('current')">
+            Current (<t t-esc="state.tabCounts.current || 0"/>)
+        </button>
+        <button t-att-class="'fup-tab'+(state.tab==='snoozed'?' active':'')"
+                t-on-click="() => this.setTab('snoozed')">
+            Snoozed (<t t-esc="state.tabCounts.snoozed || 0"/>)
+        </button>
+        <button t-att-class="'fup-tab'+(state.tab==='net_zero'?' active':'')"
+                t-on-click="() => this.setTab('net_zero')">
+            Net Zero (<t t-esc="state.tabCounts.net_zero || 0"/>)
+        </button>
+    </div>
+
+    <!-- Table -->
+    <div class="fup-table-wrap">
+        <t t-if="state.loading">
+            <div class="fup-loading"><div class="vd-spinner"/><span>Loading&#8230;</span></div>
+        </t>
+        <t t-if="!state.loading">
+            <table t-att-class="'fup-table'+(state.compact?' fup-compact':'')">
+                <thead>
+                    <tr>
+                        <th class="fup-th-chk">
+                            <input type="checkbox"
+                                   t-att-checked="allSelected ? 'checked' : undefined"
+                                   t-on-change="toggleAll"/>
+                        </th>
+                        <th class="fup-th-name">Customer Name</th>
+                        <th class="fup-th-num">Due / Outstanding</th>
+                        <th class="fup-th-num">Due Bills / Total Bills</th>
+                        <th class="fup-th-num">Follow-up In 10 Days</th>
+                        <th class="fup-th-num">APCD 30 Days</th>
+                        <th class="fup-th-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="state.rows" t-as="row" t-key="row.partner_id">
+                        <tr t-att-class="'fup-tr'+(state.selected[row.partner_id]?' fup-selected':'')">
+                            <td class="fup-td-chk">
+                                <input type="checkbox"
+                                       t-att-checked="state.selected[row.partner_id] ? 'checked' : undefined"
+                                       t-on-change="() => this.toggleSelect(row.partner_id)"/>
+                            </td>
+                            <td class="fup-td-name">
+                                <span class="fup-partner-name"><t t-esc="row.partner_name"/></span>
+                                <span class="fup-contact-icons">
+                                    <t t-if="row.email">
+                                        <svg class="fup-ci fup-ci-email" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                    </t>
+                                    <t t-if="row.phone">
+                                        <svg class="fup-ci fup-ci-phone" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 13.19 19a19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 4.12 4.18 2 2 0 0 1 6.1 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L10 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 24 16.92z"/></svg>
+                                    </t>
+                                </span>
+                                <span class="fup-pct"><t t-esc="row.due_pct"/>%</span>
+                            </td>
+                            <td t-att-class="'fup-td-num '+(row.outstanding != 0 ? (row.outstanding > 0 ? 'fup-pos':'fup-neg') : '')">
+                                <t t-esc="fmt(row.due_amount)"/> / <t t-esc="fmt(row.outstanding)"/>
+                            </td>
+                            <td class="fup-td-num"><t t-esc="row.due_bills"/> / <t t-esc="row.total_bills"/></td>
+                            <td class="fup-td-num"><t t-esc="row.followup_10d || 0"/></td>
+                            <td class="fup-td-num">
+                                <t t-if="row.apcd_days">
+                                    <t t-esc="row.apcd_days"/> days
+                                </t>
+                                <t t-else="">-</t>
+                            </td>
+                            <td class="fup-td-actions">
+                                <!-- Snooze -->
+                                <button class="fup-act-btn fup-act-snooze" title="Snooze"
+                                        t-on-click="() => this.openAction(row, 'snooze')">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                                </button>
+                                <!-- Call -->
+                                <button class="fup-act-btn fup-act-call" title="Log Call"
+                                        t-on-click="() => this.openAction(row, 'call')">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 13.19 19a19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 4.12 4.18 2 2 0 0 1 6.1 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L10 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 24 16.92z"/></svg>
+                                </button>
+                                <!-- Smiley -->
+                                <button class="fup-act-btn fup-act-smiley" title="Customer Satisfied">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                                </button>
+                                <!-- Email -->
+                                <button class="fup-act-btn fup-act-email" title="Send Email"
+                                        t-on-click="() => this.openAction(row, 'email')">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                </button>
+                                <!-- WhatsApp -->
+                                <button class="fup-act-btn fup-act-wa" title="WhatsApp"
+                                        t-on-click="() => this.openAction(row, 'whatsapp')">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+                                </button>
+                                <!-- Download -->
+                                <button class="fup-act-btn fup-act-dl" title="Download Statement"
+                                        t-on-click="() => this.downloadStatement(row)">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                </button>
+                            </td>
+                        </tr>
+                    </t>
+                    <t t-if="!state.rows.length and !state.loading">
+                        <tr><td colspan="7" class="fup-empty">No records found</td></tr>
+                    </t>
+                </tbody>
+            </table>
+        </t>
+    </div>
+
+    <!-- Pagination -->
+    <div class="fup-pager">
+        <button class="fup-pg-btn" t-att-disabled="state.page===1?'':undefined" t-on-click="prevPage">&#8249;</button>
+        <t t-foreach="pageNums" t-as="p" t-key="p_index">
+            <t t-if="p==='...'"><span class="fup-pg-dot">&#8230;</span></t>
+            <t t-else=""><button t-att-class="'fup-pg-btn'+(state.page===p?' on':'')" t-on-click="() => this.goPage(p)"><t t-esc="p"/></button></t>
+        </t>
+        <button class="fup-pg-btn" t-att-disabled="state.page===state.totalPages?'':undefined" t-on-click="nextPage">&#8250;</button>
+    </div>
+
+    <!-- ── Action Popups ────────────────────────────────────────── -->
+    <t t-if="state.activePopup">
+        <div class="fup-overlay" t-on-click="closePopup"/>
+
+        <!-- Snooze -->
+        <t t-if="state.activePopup === 'snooze'">
+            <div class="fup-popup">
+                <div class="fup-popup-head">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    <span>1 <t t-esc="state.commRow.partner_name"/></span>
+                    <button class="fup-popup-close" t-on-click="closePopup">&#10005;</button>
+                </div>
+                <label class="fup-popup-label">Remarks <span class="fup-req">*</span></label>
+                <textarea class="fup-popup-textarea" placeholder="Enter remarks..."
+                          t-att-value="state.snoozeRemark" t-on-input="onSnoozeRemark"/>
+                <div class="fup-charcount"><t t-esc="(state.snoozeRemark||'').length"/> / 500</div>
+                <label class="fup-popup-label">Snooze Until <span class="fup-req">*</span></label>
+                <input type="datetime-local" class="fup-popup-input"
+                       t-att-value="state.snoozeUntil" t-on-change="onSnoozeUntil"/>
+                <div class="fup-popup-foot">
+                    <button class="fup-popup-cancel" t-on-click="closePopup">Cancel</button>
+                    <button class="fup-popup-submit" t-on-click="submitSnooze">Snooze</button>
+                </div>
+            </div>
+        </t>
+
+        <!-- Call -->
+        <t t-if="state.activePopup === 'call'">
+            <div class="fup-popup">
+                <div class="fup-popup-head">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 13.19 19a19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 4.12 4.18 2 2 0 0 1 6.1 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L10 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 24 16.92z"/></svg>
+                    <span>1 <t t-esc="state.commRow.partner_name"/></span>
+                    <button class="fup-popup-close" t-on-click="closePopup">&#10005;</button>
+                </div>
+                <label class="fup-popup-label">Call Status</label>
+                <div class="fup-dd-wrap">
+                    <div class="fup-dd-btn" t-on-click="toggleCallDD">
+                        <t t-if="state.callStatus==='answered'">
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#22c55e" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 13.19 19a19.5 19.5 0 0 1-6-6"/></svg>
+                            Call Answered
+                        </t>
+                        <t t-else="">
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#ef4444" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"/><path d="M3.35 3.35A17.91 17.91 0 0 0 2 12"/></svg>
+                            Call Unanswered
+                        </t>
+                        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <t t-if="state.callStatusOpen">
+                        <div class="fup-dd-list">
+                            <div class="fup-dd-item" t-on-click="() => this.setCallStatus('unanswered')">
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#ef4444" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"/></svg> Call Unanswered
+                            </div>
+                            <div class="fup-dd-item" t-on-click="() => this.setCallStatus('answered')">
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#22c55e" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2"/></svg> Call Answered
+                            </div>
+                        </div>
+                    </t>
+                </div>
+                <textarea class="fup-popup-textarea fup-textarea-sm" placeholder="Add notes..."
+                          t-att-value="state.callNote" t-on-input="onCallNote"/>
+                <div class="fup-charcount"><t t-esc="(state.callNote||'').length"/> / 500</div>
+                <div class="fup-popup-foot">
+                    <button class="fup-popup-cancel" t-on-click="closePopup">Cancel</button>
+                    <button class="fup-popup-submit" t-on-click="submitCall">Submit</button>
+                </div>
+            </div>
+        </t>
+
+        <!-- WhatsApp -->
+        <t t-if="state.activePopup === 'whatsapp'">
+            <div class="fup-popup">
+                <div class="fup-popup-head fup-head-wa">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+                    <span>1 <t t-esc="state.commRow.partner_name"/></span>
+                    <button class="fup-popup-close" t-on-click="closePopup">&#10005;</button>
+                </div>
+                <label class="fup-popup-label">Select Number</label>
+                <input class="fup-popup-input" t-att-value="state.waNumber" t-on-input="onWaNumber" placeholder="+91 9xxxxxxxxx"/>
+                <label class="fup-popup-label">Message</label>
+                <textarea class="fup-popup-textarea" t-att-value="state.waMessage" t-on-input="onWaMessage"/>
+                <div class="fup-charcount"><t t-esc="(state.waMessage||'').length"/> / 500</div>
+                <div class="fup-attach-head">Attachments Options</div>
+                <label class="fup-chk"><input type="checkbox" t-att-checked="state.waAddStatement?'checked':undefined" t-on-change="toggleWaStatement"/> Add Outstanding Statement</label>
+                <label class="fup-chk"><input type="checkbox" t-att-checked="state.waAddLedger?'checked':undefined" t-on-change="toggleWaLedger"/> Add Ledger</label>
+                <div class="fup-popup-foot">
+                    <button class="fup-popup-cancel" t-on-click="closePopup">Cancel</button>
+                    <button class="fup-popup-submit fup-wa-btn" t-on-click="submitWhatsApp">Send WhatsApp</button>
+                </div>
+            </div>
+        </t>
+
+        <!-- Email -->
+        <t t-if="state.activePopup === 'email'">
+            <div class="fup-popup">
+                <div class="fup-popup-head">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#4f6df5" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    <span>1 <t t-esc="state.commRow.partner_name"/></span>
+                    <button class="fup-popup-close" t-on-click="closePopup">&#10005;</button>
+                </div>
+                <label class="fup-popup-label">Select Email</label>
+                <input class="fup-popup-input" t-att-value="state.emailTo" t-on-input="onEmailTo" placeholder="email@example.com"/>
+                <div class="fup-attach-head">Attachments Options</div>
+                <p class="fup-attach-hint">Select at least one attachment to enable sending.</p>
+                <label class="fup-chk"><input type="checkbox" t-att-checked="state.emailAddStatement?'checked':undefined" t-on-change="toggleEmailStatement"/> Add Outstanding Statement</label>
+                <label class="fup-chk"><input type="checkbox" t-att-checked="state.emailAddLedger?'checked':undefined" t-on-change="toggleEmailLedger"/> Add Ledger</label>
+                <div class="fup-popup-foot">
+                    <button class="fup-popup-cancel" t-on-click="closePopup">Cancel</button>
+                    <button class="fup-popup-submit" t-on-click="submitEmail"
+                            t-att-disabled="state.emailSending?'':undefined">
+                        <t t-if="state.emailSending">Sending&#8230;</t>
+                        <t t-else="">Send Email</t>
+                    </button>
+                </div>
+            </div>
+        </t>
+    </t>
+
+</div>
+</t>
+
+</templates>

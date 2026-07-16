@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_register_report_list_inherit_product_desc" model="ir.ui.view">
+        <field name="name">sales.register.report.list.inherit.product.desc</field>
+        <field name="model">sales.register.report</field>
+        <field name="inherit_id" ref="sale_register_report_18.view_sale_register_report_list"/>
+        <field name="arch" type="xml">
+            <field name="y_product_id" position="after">
+                <field name="y_product_description" optional="show"/>
+            </field>
+        </field>
+    </record>
+</odoo>

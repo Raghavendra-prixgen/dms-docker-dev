@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="vahini_dashboard.TrendView">
+<div class="tvw-root">
+
+    <!-- ── Filter bar ──────────────────────────────────── -->
+    <div class="tvw-filter-bar">
+        <!-- Report type -->
+        <select class="tvw-sel" t-on-change="(ev) => this.setReportType(ev.target.value)">
+            <option value="sales">Sales</option>
+            <option value="purchase">Purchase</option>
+        </select>
+        <!-- Fiscal Year -->
+        <select class="tvw-sel" t-on-change="(ev) => this.setFY(ev.target.value)">
+            <t t-foreach="fyOptions" t-as="fy" t-key="fy">
+                <option t-att-value="fy" t-att-selected="state.fiscalYear===fy?'selected':undefined"><t t-esc="fy"/></option>
+            </t>
+        </select>
+        <!-- Period -->
+        <select class="tvw-sel" t-on-change="(ev) => this.setPeriod(ev.target.value)">
+            <option value="monthly">Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="yearly">Yearly</option>
+        </select>
+        <!-- Month multi-select -->
+        <div class="tvw-month-wrap">
+            <div class="tvw-month-btn" t-on-click="() => this.state.monthDropOpen = !this.state.monthDropOpen">
+                <span><t t-esc="selectedMonthsLabel"/></span>
+                <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <t t-if="state.monthDropOpen">
+                <div class="tvw-month-dd">
+                    <t t-foreach="allMonthsList" t-as="m" t-key="m.num">
+                        <label class="tvw-month-item">
+                            <input type="checkbox"
+                                   t-att-checked="state.selectedMonths.has(m.num)?'checked':undefined"
+                                   t-on-change="() => this.toggleMonth(m.num)"/>
+                            <span><t t-esc="m.label"/></span>
+                        </label>
+                    </t>
+                </div>
+            </t>
+        </div>
+        <button class="tvw-submit-btn" t-on-click="submit">Submit</button>
+    </div>
+
+    <!-- ── Body: table + city panel ─────────────────────── -->
+    <div class="tvw-body">
+
+        <!-- Table section -->
+        <div class="tvw-table-section">
+            <!-- Table toolbar -->
+            <div class="tvw-tbl-toolbar">
+                <!-- Group by dropdown -->
+                <div class="tvw-grp-wrap">
+                    <div class="tvw-grp-btn" t-on-click="() => this.state.groupDropOpen=!this.state.groupDropOpen">
+                        <span><t t-esc="groupLabel"/></span>
+                        <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <t t-if="state.groupDropOpen">
+                        <div class="tvw-grp-dd">
+                            <t t-foreach="groupOptions" t-as="opt" t-key="opt.value">
+                                <div t-att-class="'tvw-grp-item'+(state.groupBy===opt.value?' sel':'')"
+                                     t-on-click="() => this.setGroupBy(opt.value)">
+                                    <t t-esc="opt.label"/>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+                </div>
+                <div class="tvw-toolbar-spacer"/>
+                <!-- Fullscreen btn -->
+                <button class="tvw-icon-btn" title="Fullscreen">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                </button>
+                <!-- Search -->
+                <div class="tvw-search-wrap">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input class="tvw-search" placeholder="Search" t-on-input="onSearch"/>
+                </div>
+                <!-- Count badge -->
+                <span class="tvw-count-badge"><t t-esc="state.total"/></span>
+                <!-- Table view -->
+                <button class="tvw-icon-btn tvw-icon-active">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+                </button>
+                <!-- Download -->
+                <button class="tvw-icon-btn" t-on-click="downloadPDF">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </button>
+            </div>
+
+            <!-- Table -->
+            <div class="tvw-table-wrap">
+                <t t-if="state.loading">
+                    <div class="tvw-loading"><div class="vd-spinner"/><span>Loading&#8230;</span></div>
+                </t>
+                <t t-if="!state.loading">
+                    <table class="tvw-table">
+                        <thead>
+                            <tr>
+                                <th class="tvw-th-name"><t t-esc="groupLabel"/></th>
+                                <t t-foreach="state.activeMonths" t-as="mo" t-key="mo.year+'_'+mo.month">
+                                    <th class="tvw-th-num">
+                                        <div><t t-esc="mo.label"/></div>
+                                        <div class="tvw-th-sub tvw-blue">
+                                            <t t-esc="fmtHeader(state.colTotals[mo.year+'_'+mo.month] || 0)"/>
+                                        </div>
+                                    </th>
+                                </t>
+                                <th class="tvw-th-num tvw-th-total">
+                                    <div>Total</div>
+                                    <div class="tvw-th-sub tvw-blue"><t t-esc="fmtHeader(state.grandTotal)"/></div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="state.rows" t-as="row" t-key="row.grp_id">
+                                <tr class="tvw-tr">
+                                    <td class="tvw-td-name"><t t-esc="row.label"/></td>
+                                    <t t-foreach="state.activeMonths" t-as="mo" t-key="'c_'+mo.year+'_'+mo.month">
+                                        <td t-att-class="'tvw-td-num '+ cellCls(row.months[mo.year+'_'+mo.month])">
+                                            <t t-esc="fmt(row.months[mo.year+'_'+mo.month])"/>
+                                        </td>
+                                    </t>
+                                    <td t-att-class="'tvw-td-num tvw-td-total '+ cellCls(row.total)">
+                                        <t t-esc="fmt(row.total)"/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <t t-if="!state.rows.length">
+                                <tr><td t-att-colspan="state.activeMonths.length+2" class="tvw-empty">No data for this period</td></tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </t>
+            </div>
+
+            <!-- Pagination -->
+            <div class="tvw-pager">
+                <button class="tvw-pg-btn" t-att-disabled="state.page===1?'':undefined" t-on-click="prevPage">&#8249;</button>
+                <t t-foreach="pageNums" t-as="p" t-key="p_index">
+                    <t t-if="p==='...'"><span class="tvw-pg-dot">&#8230;</span></t>
+                    <t t-else=""><button t-att-class="'tvw-pg-btn'+(state.page===p?' on':'')" t-on-click="() => this.goPage(p)"><t t-esc="p"/></button></t>
+                </t>
+                <button class="tvw-pg-btn" t-att-disabled="state.page===state.totalPages?'':undefined" t-on-click="nextPage">&#8250;</button>
+            </div>
+        </div>
+
+        <!-- ── City panel ───────────────────────────────── -->
+        <div class="tvw-city-panel">
+            <div class="tvw-city-head">City</div>
+            <div class="tvw-city-search-wrap">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input class="tvw-city-search" placeholder="Search" t-on-input="onCitySearch"/>
+            </div>
+            <div class="tvw-city-list">
+                <t t-foreach="state.filteredCities" t-as="city" t-key="city">
+                    <div t-att-class="'tvw-city-item'+(state.cityFilter===city?' active':'')"
+                         t-on-click="() => this.setCity(city)">
+                        <t t-esc="city"/>
+                    </div>
+                </t>
+                <t t-if="!state.filteredCities.length and !state.loading">
+                    <div class="tvw-city-empty">No cities found</div>
+                </t>
+            </div>
+        </div>
+
+    </div>
+</div>
+</t>
+</templates>

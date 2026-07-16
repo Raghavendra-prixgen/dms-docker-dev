@@ -1,0 +1,51 @@
+
+.vd-chart-pager,
+.vd-dt-pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 6px 10px;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.vd-pg {
+    min-width: 25px;
+    height: 25px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text1);
+    font-size: 11px;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .12s;
+
+    &:hover:not([disabled]) {
+        background: var(--blue);
+        color: #fff;
+        border-color: var(--blue);
+    }
+
+    &.on {
+        background: var(--blue) !important;
+        color: #fff !important;
+        border-color: var(--blue) !important;
+    }
+
+    &[disabled] {
+        opacity: .38;
+        cursor: not-allowed;
+    }
+}
+
+.vd-pg-dot {
+    color: var(--text2);
+    font-size: 11px;
+    padding: 0 2px;
+}

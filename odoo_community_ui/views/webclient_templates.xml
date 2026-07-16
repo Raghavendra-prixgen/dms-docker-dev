@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Login page customization removed for Odoo 18 compatibility -->
+    <!-- The original template targeted 'container py-5' div which no longer exists in Odoo 18 -->
+</odoo>

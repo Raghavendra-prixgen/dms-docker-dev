@@ -1,0 +1,52 @@
+// ── Vahini Theme — Login page ─────────────────────────────────────────────────
+body.o_web_client.o_login_page,
+.o_action_manager > .o_login_form {
+    background: linear-gradient(135deg, #1e293b 0%, #0f1623 60%, #1a2234 100%) !important;
+}
+
+// Login card
+.o_login_screen, .card.o_database_list {
+    background: #ffffff !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 60px rgba(0,0,0,.35) !important;
+    border: none !important;
+    padding: 8px !important;
+}
+
+// Company logo
+.o_login_screen img, .o_database_list img {
+    max-height: 60px;
+}
+
+// Input fields
+.o_login_screen .form-control,
+.o_database_list .form-control {
+    border-radius: 8px !important;
+    border: 1px solid #e2e8f0 !important;
+    height: 42px;
+    font-size: 14px;
+    &:focus {
+        border-color: #4f6df5 !important;
+        box-shadow: 0 0 0 3px rgba(79,109,245,.12) !important;
+    }
+}
+
+// Login button
+.o_login_screen .btn-primary,
+.o_database_list .btn-primary {
+    background: #4f6df5 !important;
+    border-color: #4f6df5 !important;
+    border-radius: 8px !important;
+    height: 42px;
+    font-weight: 600;
+    font-size: 14px;
+    width: 100%;
+    &:hover { background: #3b57d4 !important; }
+}
+
+// Footer links
+.o_login_screen .text-center a,
+.o_database_list .text-center a {
+    color: #4f6df5 !important;
+    &:hover { color: #3b57d4 !important; }
+}

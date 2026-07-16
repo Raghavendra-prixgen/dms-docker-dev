@@ -1,0 +1,561 @@
+<odoo>
+	<data>
+
+       
+
+        <!-- <record id="view_inherit_res_bank_upi" model="ir.ui.view">
+            <field name="name">res.bank.upi.inherit</field>
+            <field name="model">res.bank</field>
+            <field name="inherit_id" ref="base.view_res_bank_form"/>
+            <field name="arch" type="xml">
+                <field name="email" position="after">
+                    <field name="upi_number_ids">
+                        <list>
+                            <field name="name"/>
+                            
+                        </list>
+                    </field>
+                </field>
+                
+            </field>
+        </record> -->
+
+
+        <!-- <record id="res_config_settings_view_form_otp_details" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.otp.detials</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="85"/>
+            <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('contacts_settings')]" position="inside">
+
+                    <div class="app_settings_block" data-string="OTP Details" string="OTP Details" data-key="OTP-Details">
+                        <h2>OTP Details</h2>
+                        <div class="row mt16 o_settings_container" name="otp_details_setting_container">
+                            <div class="col-xs-12 col-md-6 o_setting_box">
+                                <div class="o_setting_right_pane">
+                                   <label for="sms_from"/>
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    
+                                    <field name = "sms_from"/>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6 o_setting_box">
+                                <div class="o_setting_right_pane">
+                                    <label for="sid"/>
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <field name = "sid"/> 
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6 o_setting_box">
+                                <div class="o_setting_right_pane">
+                                    <label for="key_id"/>
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <field name = "key_id"/> 
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6 o_setting_box">
+                                <div class="o_setting_right_pane">
+                                    <label for="token"/>
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <field name = "token"/> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record> -->
+
+        <record id="duplicate_sale_order_form" model="ir.ui.view">
+            <field name="name">duplicate.sale.order.form</field>
+            <field name="model">duplicate.sale.order</field>
+            <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_type" string="Synchronize" type="object" class="oe_highlight"/>
+                    <button name="update_quantity" string="Update Quantity" type="object" class="oe_highlight"/>
+                    <button name="create_vendor_bills" string="Create Bill" type="object" class="oe_highlight"/>
+                </header>
+                  <sheet>
+                    <group>
+                    <group>
+                        <field name="company_id" string="Customer"/>
+                        <field name="quotation_date" string="Quotation Date"/>
+                        <field name="partner_shipping_id"/>
+                    </group>
+                    <group>
+                        <field name="deliver_to" string="Deliver To"/>
+                        <field name="address" string="Address"/>
+                        <field name="currency_id"/>
+                        <field name="delivery_state"/>
+                        <field name='sale_order_no'/>
+                    </group>
+                    </group>
+                    <notebook>
+                        <page string="Order Lines">
+                          <field name="duplicate_sale_order_line_ids">
+                            <list editable="bottom" >
+                              <field name="product_id" />
+                              <field name="product_uom_qty" />
+                              <field name="product_uom"/>
+                              <field name="price_unit"/>
+                              <field name="tax_id" widget="many2many_tags" />
+                              <field name="price_subtotal"/>
+                              <field name="price_tax"/>
+                              <field name="price_total"/>
+                            </list>
+                          </field>
+                          <group name="note_group" col="6" class="mt-2 mt-md-0">
+                            <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+                              <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                              <field name="amount_tax" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                              <field name="amount_total" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                          </group>
+                        </page>
+
+                    </notebook>
+                </sheet>
+                  <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                  </div>
+                </form>
+            
+            </field>
+        </record>
+
+        
+        <record id="draft_filter" model="ir.ui.view">
+        <field name="model">draft.partner</field>
+        <field name="arch" type="xml">
+            <search string="Draft Partner">
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+            </search>
+        </field>
+    </record>
+
+<!--         
+        <record id="claim_request_line" model="ir.ui.view">
+            <field name="name">claim.request.line.form</field>
+            <field name="model">claim.request.line</field>
+            <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="is_returned"/>
+                        </group>
+                        <group>
+                        
+                        </group>
+                    </group>
+                    
+                </sheet>
+            </form>
+            </field>
+        </record> -->
+
+
+
+        <record id="duplicate_sale_order_list_view" model="ir.ui.view">
+            <field name="name">duplicate_sale_order_list_view</field>
+            <field name="model">duplicate.sale.order</field>
+            <field name="arch" type="xml">
+              <list >
+                <field name="company_id" />
+                <field name="quotation_date"/>
+
+              </list>
+            </field>
+        </record>
+
+        <record id="draft_partner_list_view" model="ir.ui.view">
+            <field name="name">draft_partner_list_view</field>
+            <field name="model">draft.partner</field>
+            <field name="arch" type="xml">
+              <list >
+                <field name="name" />
+                <field name="mobile"/>
+
+              </list>
+            </field>
+        </record>
+
+
+        <record id="duplicate_sale_order_action" model="ir.actions.act_window">
+            <field name="name">Duplicate Sale Order</field>
+            <field name="res_model">duplicate.sale.order</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <!-- <record id="draft_partner_action" model="ir.actions.act_window">
+            <field name="name">Retailer Draft Partner</field>
+            <field name="res_model">draft.partner</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('is_retailer','=',True)]</field>
+        </record>
+
+        <record id="is_plumber_draft_partner_action" model="ir.actions.act_window">
+            <field name="name">Plumber Draft Partner</field>
+            <field name="res_model">draft.partner</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('is_plumber', '=', True)]</field>
+        </record> -->
+
+
+        <!-- <record id="claim_request_action" model="ir.actions.act_window">
+            <field name="name">Claim Request</field>
+            <field name="res_model">claim.request</field>
+            <field name="view_mode">list,form</field>
+        </record> -->
+
+        <!-- <record id="claim_request_reject_action" model="ir.actions.act_window">
+            <field name="name">Claim Request Reject Reason</field>
+            <field name="res_model">claim.reject</field>
+            <field name="view_mode">list,form</field>
+        </record> -->
+
+        <!-- <menuitem id="menu_duplicate_sale_order"
+                name="Duplicate Sale Order"
+                parent="sale.menu_sales_config"
+                action="duplicate_sale_order_action"/>
+
+
+        <menuitem id="menu_draft_partner"
+                name="Draft Partner"
+                parent="sale.menu_sales_config"
+                action="draft_partner_action"/>
+
+        <menuitem id="menu_kyc_types"
+                name="KYC Types"
+                parent="sale.menu_sales_config"
+                action="kyc_types_action"/>
+
+        <menuitem id="menu_claim_request"
+                name="Claim Request"
+                parent="sale.menu_sales_config"
+                action="claim_request_action"/>
+
+        <menuitem id="menu_claim_request_reject"
+                name="Claim Reject Reason"
+                parent="sale.menu_sales_config"
+                action="claim_request_reject_action"/> -->
+
+
+
+
+
+
+		<record id="view_inherit_sale_order" model="ir.ui.view">
+            <field name="name">sale.order.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="duplicate_sale_entry_id"/>
+                    <field name="delivery_status"/>
+                </field>
+                <xpath expr="//page/field[@name='order_line']/list/field[@name='product_id']" position="after">
+                    <field name="duplicate_sale_line_entry_id"/>
+                </xpath>
+                
+                <button name="action_cancel" position='after'>
+                    <button name="action_type" string="Publish" type="object" class="oe_highlight"/>
+                </button>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="res_company_inherit_vires">
+            <field name="name">res company form view</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position='inside'>
+                    <page string="Server">
+                        <group>
+                            <field name="server_db"/>
+                            <field name="server_url"/>
+                            <field name="user_name"/>
+                            <field name="server_password"/>
+                            
+                            <label for="api_token">Api Token</label>
+                            <div class="o_row">
+                                <field name="api_token" string="Api Token"/>
+                                <button name="action_generate_code" type="object" class="btn btn-primary fa fa-plus-square-o" aria-label="Creates New Api Token" title="Creates New Api Token" role="img" />
+                                
+                            </div>
+                            <field name="tally_url" /> 
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+      
+        <record id="view_inherit_res_partner_primary" model="ir.ui.view">
+            <field name="name">res.partner.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <div name="button_box" position="inside">
+                    <!-- <button class="oe_stat_button" 
+                             type="object" 
+                             icon="fa-tags"     
+                             string="ByProduct Redeem"                    
+                             name="action_by_product_redeem">
+                    </button> -->
+                    <!-- <button class="oe_stat_button" 
+                             type="object" 
+                             icon="fa-money"     
+                             string="Redeem"                    
+                             name="action_by_cash_redeem">
+                    </button> -->
+                </div>
+                <field name="ref" position="after">
+                    <field name="customer_primary_key"/>
+                </field>  
+                <xpath expr="//sheet/notebook" position="inside">
+                    
+                    <page name="Additional Information">
+                        <group>
+                            <group>
+                                <field name="district_id"/>
+                                <field name="taluk_id"/>
+                            </group>
+                        </group>
+                    </page>
+                    
+                </xpath>   
+                <xpath expr="/form/sheet/notebook/page[2]/group//field[@name='property_inbound_payment_method_line_id']" position="after">
+                    <field name="y_is_distributor"/>
+                </xpath>      
+            </field>
+        </record>
+
+        <record id="res_partner_action" model="ir.actions.act_window">
+            <field name="name">Redeem </field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">form</field>
+          </record>
+
+
+        <record id="view_inherit_res_company_primary" model="ir.ui.view">
+            <field name="name">res.company.inherit</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <field name="phone" position="after">
+                    <field name="company_primary_key" invisible="0"/>
+                </field>       
+            </field>
+        </record>
+
+
+        <record id="view_inherit_raccount_move_primary" model="ir.ui.view">
+            <field name="name">account.move.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                
+                <!-- <field name="partner_id" position="after">
+                    <field name="sale_id"/>
+                    <field name="duplicate_sale_entry_id"/>
+                    <field name="tally_invoice_number"/>
+                    <field name="tally_master_id"/>
+                    <field name="company_primary_key" invisible="1"/>
+                    <field name="tally_taxable_amount"/>
+                    <field name="tally_tax_amount"/>
+                    <field name="special_disc_on_sales"/>
+                     -->
+                    
+                    
+                   
+                <!-- </field>   -->
+                <xpath expr="//notebook" position='inside'>
+                    <page string="Tally Info">
+                        <group>
+                            <group>
+                                <field name="sale_id"/>
+                                <field name="duplicate_sale_entry_id"/>
+                                <field name="tally_invoice_number" readonly="1"/>
+                                <field name="tally_master_id" readonly="1"/>
+                                <field name="company_primary_key" readonly="1"/>
+                                
+                            </group>
+                            <group>
+                                <field name="company_code" invisible="1"/>
+                                <field name="tally_taxable_amount"/>
+                                <field name="tally_tax_amount"/>
+                                <field name="special_disc_on_sales"/>
+                                <field name="invoice_origin" readonly="1"/>
+                                <field name="vch_primary_key" readonly="1"/> 
+                                <field name="distributor_name" readonly="1" /> 
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+                        
+
+
+                <xpath expr="//notebook//field[@name='invoice_line_ids']/list/field[@name='product_id']" position="after">
+                    <field name="tally_product_name"/>
+                    <field name="tally_product_code"/>
+                </xpath>
+
+                <xpath expr="//notebook//field[@name='invoice_line_ids']/list/field[@name='price_unit']" position="after">
+                        <field name="cash_discount"/>
+                        <field name="tally_amount"/>
+                    </xpath>         
+            </field>
+        </record>
+        <record id="view_invoice_list_inherit_distributor" model="ir.ui.view">
+            <field name="name">account.move.list.inherit.distributor</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_invoice_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_partner_display_name']" position="after">
+                    <field name="distributor_name" string="Distributor Name" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
+         <!-- <record id="view_inherit_raccount_move_primary_list" model="ir.ui.view">
+            <field name="name">account.move.inherit.list</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_tree"/>
+            <field name="arch" type="xml">
+                <field name="invoice_date_due" position="after">
+                    <field name="tally_invoice_number"/>
+                </field>
+            </field>
+        </record> -->
+
+
+        <record id="view_inherit_stock_location_primary" model="ir.ui.view">
+            <field name="name">stock.location.inherit</field>
+            <field name="model">stock.location</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
+            <field name="arch" type="xml">
+                <field name="scrap_location" position="after">
+                    <field name="stock_quant_location"/>
+                </field>           
+            </field>
+        </record>
+
+        <record id="view_inherit_account_journal_primary" model="ir.ui.view">
+            <field name="name">account.journal.inherit</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet//field[@name='company_id']" position="after">
+                    <group>
+                        <div class="o_row">
+                            <label for="journal_tally_id"/>
+        
+                            <div class="o_row o_align_items_center">
+                                <field name="journal_tally_id"/>
+        
+                                <button name="action_generate_code"
+                                        type="object"
+                                        string="Generate Code"
+                                        class="btn-primary ms-2"/>
+                            </div>
+                        </div>
+                    </group>
+                </xpath>
+        
+            </field>
+        </record>
+        
+
+
+        <record id="view_inherit_purchase_order_api" model="ir.ui.view">
+            <field name="name">purchase.order.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+
+                <button name="button_confirm" position='after'>
+                    <button name="action_type" string="Synchronize" type="object" class="oe_highlight"/>
+                    <button name="accept_reciept" string="Accept Quantity" type="object" class="oe_highlight"/>
+                    <button name="accept_bill" string="Accept Bill" type="object" class="oe_highlight"/>
+                </button>
+
+                <field name="partner_id" position="after">
+                    <field name="sale_order_no"/>
+                    <field name="sale_delivery_state"/>
+                </field>
+
+                <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="after" >
+                    <field name="sale_delivered_qty"/>
+                </xpath>
+
+            </field>
+        </record>
+
+
+        <record id="view_inherit_product_template_primary" model="ir.ui.view">
+            <field name="name">product.template.inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="create_product" string="Publish" class="oe_highlight" type="object"/>
+                </xpath>   
+                <field name="categ_id" position="after">
+                    <field name="company_names"/>
+                    <field name="company_ids" widget="many2many_tags"/>
+                </field>       
+            </field>
+        </record>
+        <record id="action_publish_product" model="ir.actions.server">
+                <field name="name">Publish</field>
+                <field name="model_id" ref="product.model_product_template"/>
+                <field name="binding_model_id" ref="product.model_product_template"/>
+                <field name="binding_type">action</field>
+                <field name="state">code</field>
+                <field name="code">
+                    action = records.create_product()
+                </field>
+            </record>
+        <record id="view_inherit_product_template_tree" model="ir.ui.view">
+            <field name="name">product.template.inherit.tree</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_tree_view"/>
+            <field name="arch" type="xml">
+                <!-- Add per-record Publish button inside list view -->
+                <xpath expr="//list" position="inside">
+                    <button name="create_product"
+                            string="Publish"
+                            type="object"
+                            icon="fa-check"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_inherit_product_category_primary" model="ir.ui.view">
+            <field name="name">product.category.inherit</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="product.product_category_form_view"/>
+            <field name="arch" type="xml">
+                <field name="parent_id" position="after">
+                    <field name="category_primary_key"/>
+                </field>             
+            </field>
+        </record>
+
+
+        <record id="product_distributor_access_rule" model="ir.rule">
+            <field name="name">Product Distributor Rule</field>
+            <field name="model_id" ref="product.model_product_template"/>
+            <field name="domain_force">['|',('company_ids','=',False),('company_ids', 'in', company_ids)]</field>  
+        </record>
+
+	</data>
+</odoo>

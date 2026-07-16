@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="vahini_dashboard.ChartCard">
+    <div class="vd-chart-card" t-on-click.stop="">
+
+        <!-- Header -->
+        <div class="vd-chart-hdr">
+
+            <!-- Searchable group dropdown -->
+            <div class="vd-cc-drop-wrap">
+                <div class="vd-cc-drop-trigger" t-on-click="toggleDrop">
+                    <span class="vd-cc-drop-label"><t t-esc="groupLabel"/></span>
+                    <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2">
+                        <t t-if="state.showDrop"><polyline points="18 15 12 9 6 15"/></t>
+                        <t t-else=""><polyline points="6 9 12 15 18 9"/></t>
+                    </svg>
+                </div>
+                <t t-if="state.showDrop">
+                    <div class="vd-cc-dropdown" t-on-click.stop="">
+                        <div class="vd-cc-srch-wrap">
+                            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                            <input class="vd-cc-srch-inp" placeholder="Search..."
+                                   t-att-value="state.searchInput"
+                                   t-on-input="onDropSearch"/>
+                        </div>
+                        <div class="vd-cc-opts">
+                            <t t-foreach="filteredOptions" t-as="opt" t-key="opt.value">
+                                <div t-att-class="'vd-cc-opt'+(state.groupBy===opt.value?' sel':'')"
+                                     t-on-click="()=>this.selectGroup(opt.value)">
+                                    <t t-esc="opt.label"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="vd-chart-toolbar">
+                <button t-att-class="'vd-ct-btn' + (isActive('bar') ? ' active' : '')"
+                        title="Bar" t-on-click="() => this.setType('bar')">
+                    <t t-call="vahini_dashboard.Icon"><t t-set="icon" t-value="'bar-chart'"/><t t-set="size" t-value="13"/></t>
+                </button>
+                <button t-att-class="'vd-ct-btn' + (isActive('pie') ? ' active' : '')"
+                        title="Pie" t-on-click="() => this.setType('pie')">
+                    <t t-call="vahini_dashboard.Icon"><t t-set="icon" t-value="'pie-chart'"/><t t-set="size" t-value="13"/></t>
+                </button>
+                <button t-att-class="'vd-ct-btn' + (isActive('donut') ? ' active' : '')"
+                        title="Donut" t-on-click="() => this.setType('donut')">
+                    <t t-call="vahini_dashboard.Icon"><t t-set="icon" t-value="'donut'"/><t t-set="size" t-value="13"/></t>
+                </button>
+                <button t-att-class="'vd-ct-btn' + (isActive('table') ? ' active' : '')"
+                        title="Table" t-on-click="() => this.setType('table')">
+                    <t t-call="vahini_dashboard.Icon"><t t-set="icon" t-value="'table'"/><t t-set="size" t-value="13"/></t>
+                </button>
+                <button class="vd-ct-btn" title="Compare" t-on-click="openCompare">
+                    <t t-call="vahini_dashboard.Icon"><t t-set="icon" t-value="'compare'"/><t t-set="size" t-value="13"/></t>
+                </button>
+                <button class="vd-chart-dl" title="Download" t-on-click="downloadChart">
+                    <t t-call="vahini_dashboard.Icon"><t t-set="icon" t-value="'download'"/><t t-set="size" t-value="12"/></t>
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <t t-if="state.loading">
+            <div class="vd-cc-loading"><div class="vd-spinner"/></div>
+        </t>
+
+        <!-- Body -->
+        <t t-if="!state.loading">
+            <div class="vd-chart-body">
+                <div class="vd-chart-plot">
+                    <!-- Table view -->
+                    <t t-if="state.type === 'table'">
+                        <div class="vd-inner-tbl-wrap">
+                            <table class="vd-inner-tbl vd-inner-tbl-full">
+                                <thead>
+                                    <tr>
+                                        <th class="left"><t t-esc="groupLabel"/></th>
+                                        <th>Qty</th>
+                                        <th>Taxpaid</th>
+                                        <th>Taxless</th>
+                                        <th>ASP Taxless</th>
+                                        <th>ASP Taxpaid</th>
+                                        <th>Contr</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="innerTableRows()" t-as="row" t-key="row.num">
+                                        <tr>
+                                            <td class="left"><t t-esc="row.name"/></td>
+                                            <td><t t-esc="row.qty"/></td>
+                                            <td><t t-esc="row.tax_paid"/></td>
+                                            <td><t t-esc="row.tax_less"/></td>
+                                            <td><t t-esc="row.asp"/></td>
+                                            <td><t t-esc="row.asp_taxpaid"/></td>
+                                            <td><t t-esc="row.contrib"/></td>
+                                        </tr>
+                                    </t>
+                                    <t t-if="!innerTableRows().length">
+                                        <tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text2)">No data</td></tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                    <!-- Chart view -->
+                    <t t-else="">
+                        <canvas t-ref="chartCanvas"/>
+                    </t>
+                </div>
+
+                <!-- Legend (only for pie/donut/bar) -->
+                <t t-if="state.type !== 'table'">
+                    <div class="vd-chart-legend">
+                        <t t-foreach="legendRows()" t-as="row" t-key="row.name">
+                            <div class="vd-legend-row">
+                                <span class="vd-legend-dot" t-att-style="'background:' + row.colour"/>
+                                <span class="vd-legend-name"><t t-esc="row.name"/></span>
+                                <span class="vd-legend-val"><t t-esc="row.value"/></span>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+            </div>
+        </t>
+
+        <!-- Pagination -->
+        <div class="vd-chart-pager">
+            <button class="vd-pg" t-att-disabled="isPrevDisabled() ? '' : undefined" t-on-click="prevPage">&#8249;</button>
+            <t t-foreach="pageNums" t-as="p" t-key="p_index">
+                <t t-if="p === '...'"><span class="vd-pg-dot">&#183;&#183;&#183;</span></t>
+                <t t-else="">
+                    <button t-att-class="'vd-pg' + (isCurrentPage(p) ? ' on' : '')"
+                            t-on-click="() => this.goPage(p)"><t t-esc="p"/></button>
+                </t>
+            </t>
+            <button class="vd-pg" t-att-disabled="isNextDisabled() ? '' : undefined" t-on-click="nextPage">&#8250;</button>
+        </div>
+
+    </div>
+</t>
+
+</templates>

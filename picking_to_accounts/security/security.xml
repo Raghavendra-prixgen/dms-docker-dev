@@ -1,0 +1,11 @@
+<data noupdate="0">
+  <record model="res.groups" id="purchase_get_pickings_with_goods_access">
+    <field name="name">Purchase Posting Type Access</field>
+  </record>
+  <record model="res.groups" id="sale_get_pickings_with_goods_access">
+    <field name="name">Sale Posting Type Access</field>
+  </record>
+  <record model="res.groups" id="vendor_invoice_dc_edit_access">
+    <field name="name">Vendor Invoice/DC Edit Access</field>
+  </record>
+</data>

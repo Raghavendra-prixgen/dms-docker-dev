@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="stock_picking_external_document_details_view_form" model="ir.ui.view">
+            <field name="name">stock.picking.external.document.details.form</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <field name="origin" position="after">
+                  <field name="y_external_document_number" invisible="picking_type_code != 'incoming' or not purchase_id" readonly="state in ('done','cancel') and not y_is_edit_vendor_invoice"/>
+                  <field name="y_external_document_date" invisible="picking_type_code != 'incoming' or not purchase_id" readonly="state in ('done','cancel') and not y_is_edit_vendor_invoice"/>
+                </field>
+                <field name="group_id" position="after">
+                    <field name="y_lr_number" invisible="picking_type_code == 'mrp_operation'" readonly="state == 'done'"/>
+                    <field name="y_lr_date"  invisible="picking_type_code == 'mrp_operation'" readonly="state == 'done'"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_move_search_inherited_picking_accounts" model="ir.ui.view">
+            <field name="name">stock.move.form.new</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_search"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="picking_id" string="Transfer"/>
+                    <field name="y_purchase_ref_id" string="Purchase Order"/>
+                    <field name="y_sale_ref_id" string="Sales Order"/>
+                </field>
+            </field>
+        </record>
+        
+        <record id="stock_move_inherit_tree_view" model="ir.ui.view">
+            <field name="name">stock.move.inherit.new</field>
+            <field name="model">stock.move</field>
+            <field name="arch" type="xml">
+                <list edit="true" create="false">
+                    <header>
+                        <button name="get_receipt_lines" type="object" string="Get Receipt Lines" invisible="context.get('ref_move_type') not in ('in_invoice', 'out_refund')"/>
+                        <button name="get_receipt_lines" type="object" string="Get Shipment Lines" invisible="context.get('ref_move_type') not in ('out_invoice', 'in_refund')"/>
+                    </header>
+                    <field name="id" column_invisible="True"/>
+                    <field name="product_id" />
+                    <field name="y_purchase_ref_id"
+                        column_invisible="context.get('ref_move_type') not in ('in_invoice', 'in_refund')"/>
+                    <field name="purchase_line_id"
+                        column_invisible="context.get('ref_move_type') not in ('in_invoice', 'in_refund')"/>
+                    <field name="y_sale_ref_id"
+                        column_invisible="context.get('ref_move_type') not in ('out_invoice', 'out_refund')"/>
+                    <field name="sale_line_id"
+                        column_invisible="context.get('ref_move_type') not in ('out_invoice', 'out_refund')"/>
+                    <field name="picking_id" />
+                    <field name="quantity" />
+                    <field name="y_quantity_to_process" />
+                    <field name="state" />
+                </list>
+            </field>
+        </record>
+
+        <record id="account_move_display_stock_move" model="ir.ui.view">
+            <field name="name">account.move.form.new</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="display_stock_move_details" type="object"
+                        string="Get Receipt Lines" invisible="state != 'draft' or move_type not in ('in_invoice','out_refund')"/>
+                    <button name="display_stock_move_details" type="object"
+                        string="Get Shipment Lines" invisible="state != 'draft' or move_type not in ('out_invoice','in_refund')"/>
+                </xpath>
+                <!-- <field name="journal_id" position="after">
+                    <field name="y_with_goods" required="1"/>
+                </field> -->
+                <!-- <xpath expr="//div[@name='journal_div']" position="after">
+                    <field name="y_with_goods" required="1" invisible="move_type not in ('out_refund','in_refund')" readonly="state == 'posted'" string="Credit Note"/>
+                    <field name="y_with_goods" required="1" invisible="not debit_origin_id or move_type != 'out_invoice'" string="Debit Note" readonly="state == 'posted'"/>
+                </xpath> -->
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="y_is_required_get_picking" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']/list/field[@name='price_unit']"
+                    position="before">
+                    <field name="y_with_goods" required="1" column_invisible="parent.move_type not in ('in_invoice','in_refund')" groups="picking_to_accounts.purchase_get_pickings_with_goods_access"/>
+                    <field name="y_with_goods" required="1" column_invisible="parent.move_type not in ('out_invoice','out_refund')" groups="picking_to_accounts.sale_get_pickings_with_goods_access"/>
+                    <field name="y_stock_picking_ref" force_save="1" readonly="1" optional="hide" options="{'no_create': True, 'no_create_edit':True, 'no_open': True}" domain="[('state','=','done'),('sale_id.order_line','in',sale_line_ids)]"/>
+                    <field name="y_stock_move_id" force_save="1" readonly="1" optional="hide"/>
+                </xpath>
+                <xpath expr="//sheet/div[@name='button_box']" position="after">
+                    <widget name="web_ribbon" title="GET RECEIPT NOT DONE   !" invisible="not y_is_required_get_picking or state =='posted' or move_type not in ('in_invoice','out_refund')" bg_color="text-bg-danger"/>
+                    <widget name="web_ribbon" title="GET SHIPMENT NOT DONE   !" invisible="not y_is_required_get_picking or state =='posted' or move_type not in ('out_invoice','in_refund')" bg_color="text-bg-danger"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="purchase_order_form_view_inherit_action_create_invoice" model="ir.ui.view">
+            <field name="name">purchase.order.form.view.inherit.action.create.invoice</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_create_invoice']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="purchase_order_kpis_tree_inherit_action_create_invoice" model="ir.ui.view">
+            <field name="name">purchase.order.kpis.list.inherit.action.create.invoice</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_kpis_tree" />
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_create_invoice']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="purchase_order_view_tree_inherit_action_create_invoice" model="ir.ui.view">
+            <field name="name">purchase.order.view.list.inherit.action.create.invoice</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_view_tree" />
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_create_invoice']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="sale_order_tree_view_inherit_action_view_sale_advance_payment_inv"
+            model="ir.ui.view">
+            <field name="name">sale.order.list.view.inherit.action.view.sale.advance.payment.inv</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.sale_order_tree" />
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='%(sale.action_view_sale_advance_payment_inv)d']"
+                    position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="sale_order_form_view_inherit_action_view_sale_advance_payment_inv"
+            model="ir.ui.view">
+            <field name="name">sale.order.form.view.inherit.action.view.sale.advance.payment.inv</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='%(sale.action_view_sale_advance_payment_inv)d']"
+                    position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="purchase.action_purchase_batch_bills" model="ir.actions.server">
+            <field name="binding_model_id" eval="False"/>
+        </record>
+
+        <record model="res.groups" id="group_access_restrict_for_validation">
+            <field name="name">3 Way Matching Validation Error</field>
+        </record>
+
+    </data>
+</odoo>

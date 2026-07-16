@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="vahini_dashboard.SideDrawer">
+    <aside t-att-class="'vd-sidebar' + (state.open ? ' open' : '')">
+
+        <div class="vd-sb-logo">
+            <div class="vd-logo-circle">S</div>
+        </div>
+
+        <nav class="vd-sb-nav">
+            <t t-foreach="navDefs" t-as="item" t-key="item_index">
+                <t t-if="item.separator">
+                    <div class="vd-nav-separator"/>
+                </t>
+                <t t-elif="item.view">
+                    <a href="#"
+                       t-att-class="'vd-nav-item' + (props.activeView === item.view ? ' active' : '')"
+                       t-att-title="item.label"
+                       t-on-click="(ev) => this.onItemClick(ev, item)">
+                        <t t-call="vahini_dashboard.Icon">
+                            <t t-set="icon" t-value="item.icon"/>
+                            <t t-set="size" t-value="18"/>
+                        </t>
+                        <span class="vd-nav-label"><t t-esc="item.label"/></span>
+                    </a>
+                </t>
+            </t>
+        </nav>
+
+        <button class="vd-sb-toggle" t-on-click="toggleSidebar">
+            <t t-if="state.open">
+                <t t-call="vahini_dashboard.Icon">
+                    <t t-set="icon" t-value="'chevron-left'"/>
+                    <t t-set="size" t-value="15"/>
+                </t>
+            </t>
+            <t t-else="">
+                <t t-call="vahini_dashboard.Icon">
+                    <t t-set="icon" t-value="'chevron-right'"/>
+                    <t t-set="size" t-value="15"/>
+                </t>
+            </t>
+        </button>
+
+    </aside>
+</t>
+
+</templates>

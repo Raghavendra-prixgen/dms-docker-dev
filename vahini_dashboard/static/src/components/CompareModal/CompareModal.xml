@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="vahini_dashboard.CompareModal">
+    <div class="vd-overlay" t-on-click="onOverlayClick">
+        <div class="vd-cmp-modal" t-on-click.stop="">
+
+            <div class="vd-cmp-hdr">
+                <span class="vd-cmp-title">Snapview Compare</span>
+
+                <select class="vd-cmp-select">
+                    <option><t t-esc="props.def.title"/></option>
+                </select>
+
+                <div class="vd-cmp-type-btns">
+                    <button t-att-class="'vd-ct-btn' + (isActiveType('bar')   ? ' active' : '')"
+                            title="Bar"   t-on-click="() => this.setType('bar')">
+                        <t t-call="vahini_dashboard.Icon"><t t-set="icon" t-value="'bar-chart'"/><t t-set="size" t-value="13"/></t>
+                    </button>
+                    <button t-att-class="'vd-ct-btn' + (isActiveType('pie')   ? ' active' : '')"
+                            title="Pie"   t-on-click="() => this.setType('pie')">
+                        <t t-call="vahini_dashboard.Icon"><t t-set="icon" t-value="'pie-chart'"/><t t-set="size" t-value="13"/></t>
+                    </button>
+                    <button t-att-class="'vd-ct-btn' + (isActiveType('donut') ? ' active' : '')"
+                            title="Donut" t-on-click="() => this.setType('donut')">
+                        <t t-call="vahini_dashboard.Icon"><t t-set="icon" t-value="'donut'"/><t t-set="size" t-value="13"/></t>
+                    </button>
+                </div>
+
+                <button class="vd-cmp-close" t-on-click="close">&#10005;</button>
+            </div>
+
+            <t t-if="state.loading">
+                <div class="vd-cmp-loading">
+                    <div class="vd-spinner"/>
+                    <span>Loading compare data…</span>
+                </div>
+            </t>
+
+            <t t-else="">
+                <div class="vd-cmp-body">
+
+                    <div class="vd-cmp-panel">
+                        <button class="vd-cmp-label-btn" t-on-click.stop="openCurrPicker">
+                            <t t-call="vahini_dashboard.Icon"><t t-set="icon" t-value="'calendar'"/><t t-set="size" t-value="11"/></t>
+                            &#160;<t t-esc="currLabel"/>
+                            <span class="vd-cmp-edit-hint">&#9660;</span>
+                        </button>
+
+                        <t t-if="state.currPickerOpen">
+                            <div class="vd-cmp-picker-overlay" t-on-click.stop="">
+                                <div class="vd-cmp-picker">
+                                    <div class="vd-cmp-picker-title">Current Period</div>
+
+                                    <div class="vd-cmp-presets">
+                                        <t t-foreach="presets" t-as="pr" t-key="pr.key">
+                                            <button t-att-class="'vd-preset-btn' + (isCurrPresetActive(pr.key) ? ' active' : '')"
+                                                    t-on-click="() => this.selectCurrPreset(pr.key)">
+                                                <t t-esc="pr.label"/>
+                                            </button>
+                                        </t>
+                                    </div>
+
+                                    <div class="vd-cmp-picker-inputs">
+                                        <div class="vd-dp-row">
+                                            <label class="vd-dp-label">From</label>
+                                            <input class="vd-dp-input" type="date"
+                                                   t-att-value="state.currDraftFrom"
+                                                   t-on-change="onCurrFromChange"/>
+                                        </div>
+                                        <div class="vd-dp-row">
+                                            <label class="vd-dp-label">To</label>
+                                            <input class="vd-dp-input" type="date"
+                                                   t-att-value="state.currDraftTo"
+                                                   t-on-change="onCurrToChange"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="vd-dp-actions">
+                                        <button class="vd-dp-cancel" t-on-click="closeCurrPicker">Cancel</button>
+                                        <button class="vd-dp-apply"  t-on-click="applyCurrDates">Apply</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <div class="vd-cmp-chart">
+                            <canvas t-ref="cmpCanvas1"/>
+                        </div>
+                    </div>
+
+                    <div class="vd-cmp-panel">
+                        <button class="vd-cmp-label-btn" t-on-click.stop="openPrevPicker">
+                            <t t-call="vahini_dashboard.Icon"><t t-set="icon" t-value="'calendar'"/><t t-set="size" t-value="11"/></t>
+                            &#160;<t t-esc="prevLabel"/>
+                            <span class="vd-cmp-edit-hint">&#9660;</span>
+                        </button>
+
+                        <t t-if="state.prevPickerOpen">
+                            <div class="vd-cmp-picker-overlay" t-on-click.stop="">
+                                <div class="vd-cmp-picker">
+                                    <div class="vd-cmp-picker-title">Compare Period</div>
+
+                                    <div class="vd-cmp-presets">
+                                        <t t-foreach="presets" t-as="pr" t-key="pr.key">
+                                            <button t-att-class="'vd-preset-btn' + (isPrevPresetActive(pr.key) ? ' active' : '')"
+                                                    t-on-click="() => this.selectPrevPreset(pr.key)">
+                                                <t t-esc="pr.label"/>
+                                            </button>
+                                        </t>
+                                    </div>
+
+                                    <div class="vd-cmp-picker-inputs">
+                                        <div class="vd-dp-row">
+                                            <label class="vd-dp-label">From</label>
+                                            <input class="vd-dp-input" type="date"
+                                                   t-att-value="state.prevDraftFrom"
+                                                   t-on-change="onPrevFromChange"/>
+                                        </div>
+                                        <div class="vd-dp-row">
+                                            <label class="vd-dp-label">To</label>
+                                            <input class="vd-dp-input" type="date"
+                                                   t-att-value="state.prevDraftTo"
+                                                   t-on-change="onPrevToChange"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="vd-dp-actions">
+                                        <button class="vd-dp-cancel" t-on-click="closePrevPicker">Cancel</button>
+                                        <button class="vd-dp-apply"  t-on-click="applyPrevDates">Apply</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <div class="vd-cmp-chart">
+                            <canvas t-ref="cmpCanvas2"/>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="vd-cmp-pager">
+                    <button class="vd-pg" t-att-disabled="isPrevDisabled() ? '' : undefined" t-on-click="prevPage">&#8249;</button>
+                    <t t-foreach="pageNums" t-as="p" t-key="p_index">
+                        <t t-if="p === '...'">
+                            <span class="vd-pg-dot">&#183;&#183;&#183;</span>
+                        </t>
+                        <t t-else="">
+                            <button t-att-class="'vd-pg' + (isCurrentPage(p) ? ' on' : '')"
+                                    t-on-click="() => this.goPage(p)">
+                                <t t-esc="p"/>
+                            </button>
+                        </t>
+                    </t>
+                    <button class="vd-pg" t-att-disabled="isNextDisabled() ? '' : undefined" t-on-click="nextPage">&#8250;</button>
+                </div>
+
+            </t>
+        </div>
+    </div>
+</t>
+
+</templates>

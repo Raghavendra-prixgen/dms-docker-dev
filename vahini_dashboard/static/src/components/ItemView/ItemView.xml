@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="vahini_dashboard.ItemView">
+<div class="ivw-root">
+
+    <!-- Header -->
+    <div class="ivw-header">
+        <div class="ivw-title-row">
+            <h2 class="ivw-title">Item View</h2>
+            <button class="ivw-gear">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Ageing Report KPIs -->
+    <div class="ivw-ageing-head">
+        <span class="ivw-ageing-title">Ageing Report</span>
+        <div class="ivw-ageing-right">
+            <button class="ivw-action-btn">Serviceable SO</button>
+            <button class="ivw-action-btn">PO Assist</button>
+            <div class="ivw-search-wrap">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input class="ivw-search" placeholder="Search" t-on-input="onSearch"/>
+            </div>
+            <!-- Filter button -->
+            <button t-att-class="'ivw-icon-btn'+(filterCount?' ivw-btn-active':'')"
+                    title="Item Filters" t-on-click="openFilter">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                <t t-if="filterCount"><span class="ivw-filter-badge"><t t-esc="filterCount"/></span></t>
+            </button>
+            <!-- Table Columns button -->
+            <button class="ivw-icon-btn" title="Table Columns" t-on-click="openCols">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            </button>
+            <!-- Download -->
+            <button class="ivw-icon-btn" title="Download" t-on-click="downloadPDF">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- KPI Cards row -->
+    <div class="ivw-kpi-row">
+        <div t-att-class="'ivw-kpi ivw-kpi-all'+(state.tab==='all'?' active':'')"
+             t-on-click="() => this.setTab('all')">
+            <div class="ivw-kpi-label">All</div>
+            <div class="ivw-kpi-val"><t t-esc="fmtKpi(state.kpis.total_val)"/></div>
+            <div class="ivw-kpi-sub">
+                <div class="ivw-kpi-close" t-if="state.tab==='all'">&#10005;</div>
+            </div>
+        </div>
+        <div t-att-class="'ivw-kpi ivw-kpi-nm'+(state.tab==='non_moving'?' active':'')"
+             t-on-click="() => this.setTab('non_moving')">
+            <div class="ivw-kpi-label">Non Moving</div>
+            <div class="ivw-kpi-val"><t t-esc="fmtKpi(state.kpis.non_moving_val || 0)"/></div>
+        </div>
+        <div t-att-class="'ivw-kpi ivw-kpi-paid'+(state.tab==='paid'?' active':'')"
+             t-on-click="() => this.setTab('paid')">
+            <div class="ivw-kpi-label">Paid</div>
+            <div class="ivw-kpi-val"><t t-esc="fmtKpi(state.kpis.paid_val || 0)"/></div>
+            <div class="ivw-kpi-sub ivw-kpi-red"><t t-esc="fmtKpi(state.kpis.total_interest || 0)"/></div>
+        </div>
+        <div t-att-class="'ivw-kpi ivw-kpi-under'+(state.tab==='under'?' active':'')"
+             t-on-click="() => this.setTab('under')">
+            <div class="ivw-kpi-label">Under</div>
+            <div class="ivw-kpi-val"><t t-esc="fmtKpi(state.kpis.under_val || 0)"/></div>
+        </div>
+        <div t-att-class="'ivw-kpi ivw-kpi-over'+(state.tab==='over'?' active':'')"
+             t-on-click="() => this.setTab('over')">
+            <div class="ivw-kpi-label">Over</div>
+            <div class="ivw-kpi-val"><t t-esc="fmtKpi(state.kpis.over_val || 0)"/></div>
+        </div>
+        <div class="ivw-kpi ivw-kpi-050">
+            <div class="ivw-kpi-label">0-50 <span class="ivw-kpi-pct">61%</span></div>
+            <div class="ivw-kpi-val"><t t-esc="fmtKpi((state.kpis.under_val||0)*0.8)"/></div>
+            <div class="ivw-kpi-sub ivw-kpi-red"><t t-esc="fmtKpi((state.kpis.total_interest||0)*0.3)"/></div>
+        </div>
+        <div class="ivw-kpi ivw-kpi-5190">
+            <div class="ivw-kpi-label">51-90 <span class="ivw-kpi-pct">12%</span></div>
+            <div class="ivw-kpi-val"><t t-esc="fmtKpi((state.kpis.under_val||0)*0.15)"/></div>
+            <div class="ivw-kpi-sub ivw-kpi-red"><t t-esc="fmtKpi((state.kpis.total_interest||0)*0.1)"/></div>
+        </div>
+        <div class="ivw-kpi ivw-kpi-90p">
+            <div class="ivw-kpi-label">Over 90 <span class="ivw-kpi-pct ivw-pct-red">26%</span></div>
+            <div class="ivw-kpi-val"><t t-esc="fmtKpi((state.kpis.over_val||0))"/></div>
+            <div class="ivw-kpi-sub ivw-kpi-red"><t t-esc="fmtKpi((state.kpis.total_interest||0)*0.6)"/></div>
+        </div>
+    </div>
+
+    <!-- Table toolbar -->
+    <div class="ivw-tbl-toolbar">
+        <div class="ivw-tbl-title">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            All Stock Items
+        </div>
+        <label class="ivw-zero-chk">
+            <input type="checkbox" t-att-checked="state.includeZero?'checked':undefined"
+                   t-on-change="() => { this.state.includeZero = !this.state.includeZero; }"/>
+            Include 0 Total Stocks
+        </label>
+    </div>
+
+    <!-- Table -->
+    <div class="ivw-table-wrap">
+        <t t-if="state.loading">
+            <div class="ivw-loading"><div class="vd-spinner"/><span>Loading stock data&#8230;</span></div>
+        </t>
+        <t t-if="!state.loading">
+            <table class="ivw-table">
+                <thead>
+                    <tr>
+                        <t t-foreach="visibleColumns" t-as="col" t-key="col.key">
+                            <th t-att-class="col.key!=='item_name'?'ivw-th-num':''">
+                                <t t-esc="col.label"/>
+                                <t t-if="col.key!=='item_name'">
+                                    <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:3px"><polyline points="18 15 12 9 6 15"/></svg>
+                                </t>
+                            </th>
+                        </t>
+                    </tr>
+                    <!-- Totals row -->
+                    <tr class="ivw-totals-row">
+                        <t t-foreach="visibleColumns" t-as="col" t-key="'tot_'+col.key">
+                            <td t-att-class="col.key!=='item_name'?'ivw-td-num':''">
+                                <t t-if="col.key==='item_name'">
+                                    <span class="ivw-total-count"><t t-esc="state.total"/></span>
+                                </t>
+                                <t t-elif="col.key==='stock_qty'">
+                                    <span class="ivw-total-blue"><t t-esc="fmtKpi(state.kpis.total_qty)"/></span>
+                                </t>
+                                <t t-elif="col.key==='stock_val'">
+                                    <span class="ivw-total-blue"><t t-esc="fmtKpi(state.kpis.total_val)"/></span>
+                                </t>
+                                <t t-elif="col.key==='sales'">
+                                    <span class="ivw-total-blue"><t t-esc="fmtKpi(state.kpis.total_sales)"/></span>
+                                </t>
+                                <t t-elif="col.key==='interest'">
+                                    <span class="ivw-total-red"><t t-esc="fmtKpi(state.kpis.total_interest)"/></span>
+                                    <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#ef4444" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                                </t>
+                                <t t-else=""><span class="ivw-total-blue">-</span></t>
+                            </td>
+                        </t>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="state.rows" t-as="row" t-key="row.product_id">
+                        <tr class="ivw-tr">
+                            <t t-foreach="visibleColumns" t-as="col" t-key="'r_'+col.key">
+                                <td t-att-class="col.key!=='item_name'?'ivw-td-num':''">
+                                    <t t-if="col.key==='item_name'">
+                                        <span class="ivw-item-name"><t t-esc="row.item_name"/></span>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-esc="fmt(row[col.key])"/>
+                                    </t>
+                                </td>
+                            </t>
+                        </tr>
+                    </t>
+                    <t t-if="!state.rows.length">
+                        <tr><td t-att-colspan="visibleColumns.length" class="ivw-empty">No stock items found</td></tr>
+                    </t>
+                </tbody>
+            </table>
+        </t>
+    </div>
+
+    <!-- Pagination -->
+    <div class="ivw-pager" t-if="state.totalPages > 1">
+        <button class="ivw-pg-btn" t-att-disabled="state.page===1?'':undefined" t-on-click="prevPage">&#8249;</button>
+        <t t-foreach="pageNums" t-as="p" t-key="p_index">
+            <t t-if="p==='...'"><span class="ivw-pg-dot">&#8230;</span></t>
+            <t t-else=""><button t-att-class="'ivw-pg-btn'+(state.page===p?' on':'')" t-on-click="() => this.goPage(p)"><t t-esc="p"/></button></t>
+        </t>
+        <button class="ivw-pg-btn" t-att-disabled="state.page===state.totalPages?'':undefined" t-on-click="nextPage">&#8250;</button>
+    </div>
+
+    <!-- ── Filter Popup ─────────────────────────────────────── -->
+    <t t-if="state.filterOpen">
+        <div class="ivw-overlay" t-on-click="closeFilter"/>
+        <div class="ivw-popup ivw-filter-popup">
+            <div class="ivw-popup-head">
+                Item Filters
+                <button class="ivw-popup-close" t-on-click="closeFilter">&#10005;</button>
+            </div>
+            <div class="ivw-filter-grid">
+                <t t-foreach="[['stock_qty','Stock Qty:'],['stock_val','Stock Val:'],['sales','Sales:'],['interest','Interest:']]" t-as="frow" t-key="frow[0]">
+                    <label class="ivw-fl"><t t-esc="frow[1]"/></label>
+                    <select class="ivw-fsel" t-on-change="(ev) => this.setFilterOp(frow[0], ev)">
+                        <option value="">Select</option>
+                        <option value="gt">&gt;</option>
+                        <option value="gte">&gt;=</option>
+                        <option value="lt">&lt;</option>
+                        <option value="lte">&lt;=</option>
+                        <option value="eq">=</option>
+                    </select>
+                    <input class="ivw-finput" placeholder="Value"
+                           t-att-value="state.filters[frow[0]].val"
+                           t-on-input="(ev) => this.setFilterVal(frow[0], ev)"/>
+                </t>
+                <label class="ivw-fl">Batch Expiry Days Within:</label>
+                <input class="ivw-finput ivw-finput-full" placeholder="Days"
+                       t-att-value="state.filters.expiry_days" t-on-input="setExpiryDays"/>
+                <label class="ivw-fl">Batch Expiry Date Before:</label>
+                <input type="date" class="ivw-finput ivw-finput-full"
+                       t-att-value="state.filters.expiry_before" t-on-change="setExpiryBefore"/>
+            </div>
+            <div class="ivw-filter-status">
+                <t t-if="state.activeFilters.length">
+                    <t t-foreach="state.activeFilters" t-as="af" t-key="af_index">
+                        <span class="ivw-filter-tag"><t t-esc="af"/></span>
+                    </t>
+                </t>
+                <t t-else="">
+                    <span class="ivw-no-filter">No Filters Applied</span>
+                </t>
+            </div>
+            <div class="ivw-popup-foot">
+                <button class="ivw-fp-reset" t-on-click="resetFilters">Reset</button>
+                <button class="ivw-fp-apply" t-on-click="applyFilters">Apply</button>
+            </div>
+        </div>
+    </t>
+
+    <!-- ── Column Chooser Popup ─────────────────────────────── -->
+    <t t-if="state.colOpen">
+        <div class="ivw-overlay" t-on-click="closeCols"/>
+        <div class="ivw-popup ivw-col-popup">
+            <div class="ivw-popup-head">
+                Choose Columns
+                <button class="ivw-popup-close" t-on-click="closeCols">&#10005;</button>
+            </div>
+            <div class="ivw-col-body">
+                <!-- Available columns -->
+                <div class="ivw-col-left">
+                    <div class="ivw-col-section-head">Available columns</div>
+                    <div class="ivw-col-search-wrap">
+                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                        <input class="ivw-col-search" placeholder="Search columns..."
+                               t-on-input="onColSearch"/>
+                    </div>
+                    <div class="ivw-col-grid">
+                        <t t-foreach="filteredExtraCols" t-as="ec" t-key="ec">
+                            <label class="ivw-col-item">
+                                <div class="ivw-toggle-sm">
+                                    <div class="ivw-toggle-knob-sm"/>
+                                </div>
+                                <span><t t-esc="ec"/></span>
+                            </label>
+                        </t>
+                    </div>
+                </div>
+                <!-- Fixed right columns -->
+                <div class="ivw-col-right">
+                    <div class="ivw-col-section-head">Fixed right columns</div>
+                    <t t-foreach="state.columns" t-as="col" t-key="col.key">
+                        <t t-if="col.key !== 'item_name'">
+                            <div class="ivw-col-fixed-row">
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                                <span><t t-esc="col.label"/></span>
+                                <div t-att-class="'ivw-toggle-sm'+(col.enabled?' on':'')"
+                                     t-on-click="() => this.toggleCol(col.key)">
+                                    <div class="ivw-toggle-knob-sm"/>
+                                </div>
+                            </div>
+                        </t>
+                    </t>
+                </div>
+            </div>
+            <!-- Sequence row -->
+            <div class="ivw-col-seq-head">Move the cards below to change the sequence on the table:</div>
+            <div class="ivw-col-seq-row">
+                <t t-foreach="state.columns.filter(c=>c.enabled)" t-as="col" t-key="'seq_'+col.key">
+                    <div class="ivw-seq-card">
+                        <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                        <span><t t-esc="col.label"/></span>
+                        <button t-if="!col.fixed" class="ivw-seq-rm"
+                                t-on-click="() => this.toggleCol(col.key)">&#10005;</button>
+                    </div>
+                </t>
+            </div>
+            <div class="ivw-popup-foot">
+                <button class="ivw-fp-save" t-on-click="applyCols">Save &amp; Apply</button>
+                <button class="ivw-fp-apply" t-on-click="applyCols">Apply</button>
+            </div>
+        </div>
+    </t>
+
+</div>
+</t>
+
+</templates>

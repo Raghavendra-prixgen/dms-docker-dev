@@ -1,0 +1,103 @@
+<odoo>
+  <data>
+  
+    <record id="view_order_tree" model="ir.ui.view">
+      <field name="name">sale.order.inherit.view.form</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.view_order_tree"/>
+      <field name="arch" type="xml">
+        <field name="commitment_date" position="after">
+          <field name="y_requested_delivery_date" optional="hide"/>
+        </field>
+      </field>
+    </record>
+
+    <record id="view_order_form_inherit" model="ir.ui.view">
+      <field name="name">sale.order.inherit.view.form</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.view_order_form"/>
+      <field name="arch" type="xml">
+        <field name="picking_policy" position="after">
+          <field name="y_requested_delivery_date"/>
+        </field>
+        <field name="user_id" position="before">
+          <field name="y_quotation_number" readonly="True"/>
+        </field>
+        <field name="validity_date" position="before">
+          <field name="y_parent_company_id" invisible="1"/>
+          <field name="y_doc_type_id" options="{'no_create': True, 'no_open': True}" required="state == 'sale'" readonly="state == 'sale'" domain="['|','|','|',('y_company_id', '=', False),('y_company_id', 'child_of', company_id),('y_company_id', '=', company_id),('y_company_id', '=', y_parent_company_id)]"/>
+        </field>
+      </field>
+    </record>
+
+    <record id="sale_doc_type_view_form" model="ir.ui.view">
+      <field name="name">sale.doc.type.view.form</field>
+      <field name="model">sale.doc.type</field>
+      <field name="arch" type="xml">
+        <form string="">
+          <sheet>
+            <group>
+              <group>
+                <field name="y_name" required="True"/>
+                <field name="y_description" string="Description"/>
+              </group>
+              <group>
+                <field name="y_sequence_id" required="True" options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"/>
+                <field name="y_company_id" options="{'no_create': True, 'no_create_edit':True, 'no_open': True}" groups="base.group_multi_company"/>
+              </group>
+            </group>
+          </sheet>
+          <chatter/>
+        </form>
+      </field>
+    </record>
+
+    <record id="sale_doc_teype_view_tree" model="ir.ui.view">
+      <field name="name">sale.doc.type.view.list</field>
+      <field name="model">sale.doc.type</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="y_name" required="True"/>
+          <field name="y_description" string="Description"/>
+          <field name="y_sequence_id" required="True" options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"/>
+          <field name="y_company_id" options="{'no_create': True, 'no_create_edit':True, 'no_open': True}" groups="base.group_multi_company"/>
+        </list>
+      </field>
+    </record>
+
+    <record model="ir.rule" id="document_record_restricted_company_rule">
+        <field name="name">Document Restricted Record: multi-company</field>
+        <field name="model_id" ref="model_sale_doc_type"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">
+            ['|', ('y_company_id', '=', False), ('y_company_id', 'parent_of', company_ids)]
+        </field>
+    </record>
+
+    <record id="sale_doc_type_view_search_delete_button" model="ir.ui.view">
+      <field name="name">sale.doc.type.search.view</field>
+      <field name="model">sale.doc.type</field>
+      <field name="arch" type="xml">
+        <search>
+            <field name="y_name"/>
+            <filter name="active" string="Active" domain="[('active', '!=',False)]"/>
+            <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+        </search>          
+      </field>
+    </record>
+
+    <record id="sale_doc_type_action" model="ir.actions.act_window">
+      <field name="name">Document Type SO</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">sale.doc.type</field>
+      <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_config_sale_others" name="Others"
+    parent="sale.menu_sale_config" sequence="100"/>
+
+    <menuitem id="sale_doc_type_menu_act" 
+    name="Document Type SO" parent="sale_base_18.menu_config_sale_others" action="sale_doc_type_action" sequence="100"/>
+  
+  </data>
+</odoo>

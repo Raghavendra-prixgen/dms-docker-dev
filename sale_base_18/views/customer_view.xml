@@ -1,0 +1,33 @@
+<odoo>
+    <record id="dev_blanket_order_customer_view" model="ir.ui.view">
+        <field name="name">dev.blanket.order.customer.view</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+           <xpath expr="//div[@class='oe_button_box']" position="inside">
+                <button type="object" name="action_view_balnket_order" class="oe_stat_button"
+                    icon="fa-truck" string="Blanket Order">
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="dev_blanket_order_sale_order_view" model="ir.ui.view">
+        <field name="name">dev.sale.order.customer.view</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <field name="payment_term_id" position="after">
+                <field name="y_blanket_order_id" domain="[('y_order_type', '=', 'blanket')]"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="sale.action_quotations_with_onboarding" model="ir.actions.act_window">
+        <field name="domain">[('y_order_type', '!=', 'blanket'),('state', 'in', ('draft', 'sent', 'cancel'))]</field>
+    </record>
+    <record id="sale.action_orders" model="ir.actions.act_window">
+        <field name="domain">[('y_order_type', '!=', 'blanket'), ('state', 'not in', ('draft', 'sent', 'cancel'))]</field>
+    </record>
+
+</odoo>

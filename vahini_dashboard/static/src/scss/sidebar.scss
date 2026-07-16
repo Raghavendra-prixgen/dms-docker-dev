@@ -1,0 +1,118 @@
+
+.vd-sidebar {
+    width: 60px;
+    min-width: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: width .25s ease;
+    overflow: hidden;
+    z-index: 100;
+    flex-shrink: 0;
+
+    &.open {
+        width: 200px;
+    }
+}
+
+.vd-sb-logo {
+    padding: 14px 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    flex-shrink: 0;
+}
+
+.vd-logo-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+    flex-shrink: 0;
+}
+
+.vd-sb-nav {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 8px 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.vd-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    // KEY FIX: center icon when collapsed, left-align when open
+    padding: 11px 0;
+    justify-content: center;       // center icons in collapsed state
+    color: var(--sb-txt);
+    transition: all .15s;
+    white-space: nowrap;
+    cursor: pointer;
+    width: 100%;
+
+    // When sidebar is open, left-align with padding
+    .vd-sidebar.open & {
+        justify-content: flex-start;
+        padding: 11px 16px;
+    }
+
+    &:hover {
+        color: #fff;
+        background: rgba(255,255,255,.06);
+    }
+
+    &.active {
+        color: var(--sb-act);
+        background: rgba(79,109,245,.25);
+    }
+
+    // Ensure icon svg never shrinks
+    svg {
+        flex-shrink: 0;
+        min-width: 18px;
+    }
+}
+
+.vd-nav-label {
+    font-size: 12px;
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+    transition: opacity .2s, width .2s;
+    white-space: nowrap;
+
+    .vd-sidebar.open & {
+        opacity: 1;
+        width: auto;
+    }
+}
+
+.vd-sb-toggle {
+    padding: 13px;
+    color: var(--sb-txt);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid rgba(255,255,255,.08);
+    flex-shrink: 0;
+
+    &:hover { color: #fff; }
+}
+
+.vd-nav-separator {
+    height: 1px;
+    background: rgba(255,255,255,.15);
+    margin: 8px 10px;
+    flex-shrink: 0;
+}

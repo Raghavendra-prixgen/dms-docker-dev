@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+
+    <t t-name="SidebarBottom">
+        <div class="sytray-container-ui">
+            <!-- User avatar + name + db -->
+            <div class="user-avtar-ui d-block py-3 px-2">
+                <div class="d-flex align-items-center">
+                    <img class="o_avatar o_user_avatar rounded"
+                         t-att-src="source" alt="User"/>
+                    <span class="oe_topbar_name ms-2 lh-1 text-truncate mb-0 py-2 text-white d-block">
+                        <t t-esc="userName"/>
+                    </span>
+                </div>
+                <div class="oe_topbar_name text-start lh-1 text-truncate w-100 mt-1">
+                    <mark class="d-block font-monospace text-truncate">
+                        <i class="fa fa-database me-1"/>
+                        <t t-esc="dbName"/>
+                    </mark>
+                </div>
+            </div>
+
+            <!-- User menu actions -->
+            <div class="sidebar-usermenu-actions">
+                <a class="sidebar-action-item" t-on-click="openPreferences">
+                    <i class="fa fa-user me-2"/>
+                    <span>Preferences</span>
+                </a>
+                <a class="sidebar-action-item" href="/web/session/logout" target="_self">
+                    <i class="fa fa-sign-out me-2"/>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </t>
+
+</templates>
