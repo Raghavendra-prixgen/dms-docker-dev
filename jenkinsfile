@@ -1,0 +1,124 @@
+pipeline {
+    agent any
+
+    environment {
+        APP_DIR       = "/home/prixgen/Downloads/dms-docker"
+        DEPLOY_REPO   = "https://github.com/Raghavendra-prixgen/dms-docker.git"
+        DEV_REPO      = "https://github.com/Raghavendra-prixgen/dms-docker-dev.git"
+        GIT_CRED_ID   = "Raghavendra-prixgen"   // Jenkins credential ID (PAT)
+        GH_REPO       = "Raghavendra-prixgen/dms-docker"
+    }
+
+    stages {
+
+        stage('Ensure Deploy Repo Exists') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: "${GIT_CRED_ID}", usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PAT')]) {
+                    sh '''
+                        set -e
+                        if [ ! -d "${APP_DIR}/.git" ]; then
+                            echo "Deploy repo not found at ${APP_DIR}, cloning..."
+                            mkdir -p "$(dirname "${APP_DIR}")"
+                            git clone https://${GIT_USER}:${GIT_PAT}@$(echo ${DEPLOY_REPO} | sed 's#https://##') "${APP_DIR}"
+                        fi
+
+                        cd "${APP_DIR}"
+                        git remote set-url origin https://${GIT_USER}:${GIT_PAT}@$(echo ${DEPLOY_REPO} | sed 's#https://##')
+
+                        if ! git remote get-url dev-origin >/dev/null 2>&1; then
+                            git remote add dev-origin https://${GIT_USER}:${GIT_PAT}@$(echo ${DEV_REPO} | sed 's#https://##')
+                        else
+                            git remote set-url dev-origin https://${GIT_USER}:${GIT_PAT}@$(echo ${DEV_REPO} | sed 's#https://##')
+                        fi
+
+                        git config user.email "jenkins@prixgen.local"
+                        git config user.name "Jenkins CI"
+                    '''
+                }
+            }
+        }
+
+        stage('Create Sync Branch and Open PR') {
+            steps {
+                dir("${APP_DIR}") {
+                    withCredentials([usernamePassword(credentialsId: "${GIT_CRED_ID}", usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PAT')]) {
+                        script {
+                            if (sh(script: 'git status --porcelain', returnStdout: true).trim()) {
+                                error("❌ Workspace has uncommitted changes. Aborting to avoid clobbering work.")
+                            }
+
+                            def branchName = "dev-sync-${env.BUILD_NUMBER}"
+
+                            sh """
+                                set -e
+                                git checkout main
+                                git fetch origin main
+                                git reset --hard origin/main
+                                git fetch dev-origin main
+                                git checkout -b ${branchName}
+                                git checkout dev-origin/main -- custom-addons/
+                                git add custom-addons/
+                            """
+
+                            def hasChanges = sh(script: 'git diff --cached --quiet', returnStatus: true) != 0
+
+                            if (!hasChanges) {
+                                echo "ℹ️ No changes to custom-addons/ from dev repo. Nothing to open a PR for."
+                                sh "git checkout main && git branch -D ${branchName}"
+                                return
+                            }
+
+                            def devMsg = sh(script: 'git log dev-origin/main -1 --pretty=%B', returnStdout: true).trim()
+
+                            writeFile file: '.sync_commit_msg.txt', text: "Sync custom-addons/ from dms-docker-dev\n\n${devMsg}"
+                            sh """
+                                git commit -F .sync_commit_msg.txt
+                                rm -f .sync_commit_msg.txt
+                                git push origin ${branchName}
+                            """
+
+                            // basic JSON string escaping for the PR title/body
+                            def esc = { String s -> s.replace('\\', '\\\\').replace('"', '\\"').replace('\r', '').replace('\n', '\\n') }
+                            def prTitle = esc("Sync custom-addons from dms-docker-dev (build ${env.BUILD_NUMBER})")
+                            def prBody  = esc(devMsg)
+
+                            writeFile file: '.pr_payload.json', text: """{
+  "title": "${prTitle}",
+  "head": "${branchName}",
+  "base": "main",
+  "body": "${prBody}"
+}"""
+
+                            sh """
+                                set -e
+                                curl -s -X POST \\
+                                  -H "Authorization: token ${GIT_PAT}" \\
+                                  -H "Accept: application/vnd.github+json" \\
+                                  -H "Content-Type: application/json" \\
+                                  -d @.pr_payload.json \\
+                                  https://api.github.com/repos/${GH_REPO}/pulls \\
+                                  -o .pr_response.json
+
+                                cat .pr_response.json
+                                grep -q '"html_url"' .pr_response.json
+                                rm -f .pr_payload.json .pr_response.json
+                            """
+
+                            // reset local workspace back to clean main for next run
+                            sh "git checkout main && git reset --hard origin/main"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "PR stage finished. Check GitHub for a new pull request against dms-docker main, if there were changes to sync."
+        }
+        failure {
+            echo 'Sync/PR pipeline failed.'
+        }
+    }
+}
