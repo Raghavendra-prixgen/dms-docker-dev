@@ -6,7 +6,7 @@
     'company': 'Prixgen Tech Solutions Pvt. Ltd.',
     'category': 'Uncategorized',
     'App origin': 'base',
-    'version': '18.0.0.111',
+    'version': '18.0.0.12',
     'license': 'LGPL-3',
     'depends': ['web', 'account', 'sale'],
     'data': [
