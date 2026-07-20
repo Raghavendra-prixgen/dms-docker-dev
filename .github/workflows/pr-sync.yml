@@ -32,7 +32,9 @@ jobs:
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
 
-          BRANCH="dev-sync-${{ github.run_number }}"
+          BRANCH="dev-sync-${{ github.run_id }}-${{ github.run_attempt }}"
+          # delete the remote branch first if a stale one exists from a previous failed attempt
+          git push origin --delete "$BRANCH" 2>/dev/null || true
           git checkout -b "$BRANCH"
 
           rm -rf custom-addons
@@ -75,5 +77,5 @@ jobs:
             --repo Raghavendra-prixgen/dms-docker \
             --base main \
             --head "${{ steps.sync.outputs.branch }}" \
-            --title "Sync custom-addons from dms-docker-dev (run ${{ github.run_number }})" \
+            --title "Sync custom-addons from dms-docker-dev (run ${{ github.run_id }})" \
             --body-file /tmp/pr_body.txt
