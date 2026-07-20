@@ -12,7 +12,7 @@
     'website': "https://www.prixgen.com",
     'category': 'Customization',
     'origin': 'base',
-    'version': '18.0.0.1',
+    'version': '18.0.0.2',
     'license': 'LGPL-3',
 
     'depends': ['base','stock','product',],
