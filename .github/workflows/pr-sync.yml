@@ -37,9 +37,27 @@ jobs:
           git push origin --delete "$BRANCH" 2>/dev/null || true
           git checkout -b "$BRANCH"
 
-          rm -rf custom-addons
-          cp -r ../dev-repo/custom-addons ./custom-addons
-          git add custom-addons
+          # find only the module folders that actually changed in dev's last commit,
+          # so we never touch modules that exist in one repo but not the other
+          CHANGED_MODULES=$(git -C ../dev-repo diff HEAD~1..HEAD --name-only \
+            | grep '^custom-addons/' \
+            | cut -d'/' -f2 \
+            | sort -u)
+
+          if [ -z "$CHANGED_MODULES" ]; then
+            echo "no_changes=true" >> "$GITHUB_OUTPUT"
+            echo "ℹ️ No custom-addons/ changes in dev's last commit. Skipping PR."
+            exit 0
+          fi
+
+          echo "Modules changed in dev: $CHANGED_MODULES"
+
+          mkdir -p custom-addons
+          for MODULE in $CHANGED_MODULES; do
+            rm -rf "custom-addons/$MODULE"
+            cp -r "../dev-repo/custom-addons/$MODULE" "custom-addons/$MODULE"
+            git add "custom-addons/$MODULE"
+          done
 
           if git diff --cached --quiet; then
             echo "no_changes=true" >> "$GITHUB_OUTPUT"
@@ -79,3 +97,86 @@ jobs:
             --head "${{ steps.sync.outputs.branch }}" \
             --title "Sync custom-addons from dms-docker-dev (run ${{ github.run_id }})" \
             --body-file /tmp/pr_body.txt
+
+
+# name: Sync custom-addons to deploy repo (open PR)
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   sync-and-pr:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout dev repo
+#         uses: actions/checkout@v4
+#         with:
+#           path: dev-repo
+#           fetch-depth: 2   # need previous commit to read its message reliably
+
+#       - name: Checkout deploy repo
+#         uses: actions/checkout@v4
+#         with:
+#           repository: Raghavendra-prixgen/dms-docker
+#           token: ${{ secrets.DEPLOY_REPO_PAT }}
+#           path: deploy-repo
+#           fetch-depth: 1
+
+#       - name: Copy custom-addons/ from dev into deploy repo on a new branch
+#         id: sync
+#         working-directory: deploy-repo
+#         run: |
+#           set -e
+#           git config user.email "actions@github.com"
+#           git config user.name "GitHub Actions"
+
+#           BRANCH="dev-sync-${{ github.run_id }}-${{ github.run_attempt }}"
+#           # delete the remote branch first if a stale one exists from a previous failed attempt
+#           git push origin --delete "$BRANCH" 2>/dev/null || true
+#           git checkout -b "$BRANCH"
+
+#           rm -rf custom-addons
+#           cp -r ../dev-repo/custom-addons ./custom-addons
+#           git add custom-addons
+
+#           if git diff --cached --quiet; then
+#             echo "no_changes=true" >> "$GITHUB_OUTPUT"
+#             echo "ℹ️ No changes to custom-addons/. Skipping PR."
+#             exit 0
+#           fi
+
+#           # carry the dev repo's last commit message forward so [db:...] / [module:...] tags survive
+#           DEV_MSG=$(git -C ../dev-repo log -1 --pretty=%B)
+#           {
+#             echo "Sync custom-addons/ from dms-docker-dev"
+#             echo ""
+#             echo "$DEV_MSG"
+#           } > /tmp/commit_msg.txt
+
+#           git commit -F /tmp/commit_msg.txt
+#           git push origin "$BRANCH"
+
+#           echo "no_changes=false" >> "$GITHUB_OUTPUT"
+#           echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+
+#           # save dev commit message for the PR body (base64 to survive multiline safely)
+#           base64 -w0 /tmp/commit_msg.txt > /tmp/commit_msg.b64
+#           echo "commit_msg_b64=$(cat /tmp/commit_msg.b64)" >> "$GITHUB_OUTPUT"
+
+#       - name: Open PR against dms-docker main
+#         if: steps.sync.outputs.no_changes == 'false'
+#         working-directory: deploy-repo
+#         env:
+#           GH_TOKEN: ${{ secrets.DEPLOY_REPO_PAT }}
+#         run: |
+#           set -e
+#           echo "${{ steps.sync.outputs.commit_msg_b64 }}" | base64 -d > /tmp/pr_body.txt
+#           gh pr create \
+#             --repo Raghavendra-prixgen/dms-docker \
+#             --base main \
+#             --head "${{ steps.sync.outputs.branch }}" \
+#             --title "Sync custom-addons from dms-docker-dev (run ${{ github.run_id }})" \
+#             --body-file /tmp/pr_body.txt
